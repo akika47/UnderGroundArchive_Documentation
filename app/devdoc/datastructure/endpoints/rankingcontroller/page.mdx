@@ -1,0 +1,31 @@
+# Szint Végpontok
+
+## `PATCH /updatePoints`
+```csharp
+// Pontok frissítése API
+[HttpPatch("updatePoints")]
+public async Task<IActionResult> UpdatePoints([FromBody] PointUpdateRequest request)
+{
+    var success = await _rankingService.AddPointsToUser(request.UserId, request.Points, request.Role);
+    if (!success)
+        return NotFound("User not found.");
+
+    return Ok("Points updated successfully.");
+}
+```
+Ez a végpont frissíti a felhasználó pontjait, figyelembe véve a felhasználó azonosítóját, a hozzáadott pontok számát és a szerepkört. Ha a felhasználó nem található, hibaüzenet kerül visszaadásra.
+
+## `PATCH /reportUser`
+```csharp
+// Felhasználó jelentése API
+[HttpPatch("reportUser")]
+public async Task<IActionResult> ReportUser([FromBody] ReportUserRequest request)
+{
+    var success = await _rankingService.PenalizeUserForReport(request.UserId);
+    if (!success)
+        return NotFound("User not found.");
+
+    return Ok("User penalized successfully.");
+}
+```
+Ez a végpont bünteti a felhasználót, ha jelentést kapott, és a jelentésben szereplő felhasználó azonosítójával történik a büntetés alkalmazása. Ha a felhasználó nem található, hibaüzenet kerül visszaadásra.

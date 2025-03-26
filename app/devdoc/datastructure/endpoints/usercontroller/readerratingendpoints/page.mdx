@@ -1,0 +1,156 @@
+# Olvasó Értékelés Végpontok
+
+## `GET /readerRatings`
+```csharp
+// A felhasználó összes értékelésének lekérése
+[HttpGet("readerRatings")]
+public async Task<ActionResult<IEnumerable<ReaderRatingDTO>>> GetReaderRatingsByUser([FromQuery] string userId)
+{
+    if (string.IsNullOrEmpty(userId))
+    {
+        return BadRequest("User ID is required.");
+    }
+
+    var readerRatings = await _dbContext.ReaderRatings
+        .Where(r => r.RaterId == userId)
+        .Select(r => new ReaderRatingDTO
+        {
+            RatingId = r.RatingId,
+            BookId = r.BookId,
+            RatingValue = r.RatingValue,
+            RaterId = r.RaterId,
+            BookName = r.Books.BookName,
+            GenreId = r.Books.GenreId,
+            CategoryId = r.Books.CategoryId
+        })
+        .ToListAsync();
+
+    if (!readerRatings.Any())
+    {
+        return NotFound("No ratings found for the given user.");
+    }
+
+    return Ok(readerRatings);
+}
+```
+Ez a végpont visszaadja a megadott felhasználó összes értékelését. Az értékelések tartalmazzák a könyv nevét, műfaját, kategóriáját és az értékelés értékét.
+
+## `GET /readerRatingsForBook/{bookId}`
+```csharp
+// Az adott könyvhöz tartozó összes értékelés lekérése
+[HttpGet("readerRatingsForBook/{bookId}")]
+public async Task<ActionResult<IEnumerable<ReaderRatingDTO>>> GetReaderRatingsForBook(int bookId)
+{
+    var readerRatings = await _dbContext.ReaderRatings
+        .Where(r => r.BookId == bookId)
+        .Select(r => new ReaderRatingDTO
+        {
+            RatingId = r.RatingId,
+            BookId = r.BookId,
+            RatingValue = r.RatingValue,
+            RaterId = r.RaterId,
+            BookName = r.Books.BookName
+        })
+        .ToListAsync();
+
+    return Ok(readerRatings);
+}
+```
+Ez a végpont visszaadja az összes értékelést egy adott könyvhöz. Az eredmény tartalmazza a könyv nevét, az értékelés értékét és a felhasználó azonosítóját.
+
+## `GET /readerRating/{id}`
+```csharp
+// Egy adott értékelés lekérése
+[HttpGet("readerRating/{id}")]
+public async Task<ActionResult<ReaderRatings>> GetReaderRating(int id)
+{
+    var readerRating = await _dbContext.ReaderRatings.Include(j => j.Books).FirstOrDefaultAsync(j => j.RatingId == id);
+    return readerRating == null ? NotFound() : readerRating;
+}
+```
+Ez a végpont egy adott értékelést ad vissza az `id` alapján. Ha az értékelés nem található, 404-es válasz kerül visszaadásra.
+
+## `POST /createReaderRating`
+```csharp
+// Új értékelés létrehozása
+[HttpPost("createReaderRating")]
+public async Task<IActionResult> CreateReaderRating(ReaderRatings readerRating)
+{
+    // Ellenőrzés: létezik-e már értékelés a felhasználótól az adott könyvre
+    var existingRating = await _dbContext.ReaderRatings
+        .FirstOrDefaultAsync(r => r.BookId == readerRating.BookId && r.RaterId == readerRating.RaterId);
+
+    if (existingRating != null)
+    {
+        return BadRequest("You have already rated this book. Please modify your existing rating.");
+    }
+
+    // Ha nem létezik, új értékelés mentése
+    _dbContext.ReaderRatings.Add(readerRating);
+    await _dbContext.SaveChangesAsync();
+
+    return CreatedAtAction(nameof(GetReaderRating), new { id = readerRating.RatingId }, new
+    {
+        message = "Értékelés sikeresen mentve!",
+        ratingId = readerRating.RatingId
+    });
+}
+```
+Ez a végpont egy új értékelést hoz létre, ha a felhasználó még nem értékelte a könyvet. Ha már létezik értékelés, akkor hibát ad vissza, hogy módosítani kell az előző értékelést.
+
+## `PUT /modifyReaderRating/{id}`
+```csharp
+// Egy meglévő értékelés módosítása
+[HttpPut("modifyReaderRating/{id}")]
+public async Task<ActionResult> PutReaderRating(int id, ReaderRatings modifiedReaderRating)
+{
+    // Ellenőrizd, hogy az ID egyezik-e
+    if (id != modifiedReaderRating.RatingId)
+    {
+        return BadRequest("Invalid Rating ID.");
+    }
+
+    // Automatikusan frissítsük a módosítás dátumát
+    modifiedReaderRating.ModifiedAt = DateTime.Now;
+
+    _dbContext.Entry(modifiedReaderRating).State = EntityState.Modified;
+
+    try
+    {
+        await _dbContext.SaveChangesAsync();
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        return NotFound("The rating was not found.");
+    }
+
+    return NoContent();
+}
+```
+Ez a végpont lehetővé teszi egy meglévő értékelés módosítását az `id` alapján. A módosítást követően a frissítési dátum automatikusan beállításra kerül.
+
+## `DELETE /deleteReaderRating/{bookId}`
+```csharp
+// Egy adott könyv értékelésének törlése
+[HttpDelete("deleteReaderRating/{bookId}")]
+public async Task<ActionResult> DeleteReaderRating(int bookId)
+{
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    if (userId == null)
+    {
+        return Unauthorized();
+    }
+
+    var readerRating = await _dbContext.ReaderRatings
+        .FirstOrDefaultAsync(r => r.BookId == bookId && r.RaterId == userId);
+    if (readerRating == null)
+    {
+        return NotFound();
+    }
+
+    _dbContext.ReaderRatings.Remove(readerRating);
+    await _dbContext.SaveChangesAsync();
+    return NoContent();
+}
+```
+Ez a végpont lehetővé teszi egy adott könyv értékelésének törlését, ha az értékelést a bejelentkezett felhasználó tette. Ha a felhasználó nem található, 404-es válasz kerül visszaadásra.

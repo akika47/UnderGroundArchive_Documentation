@@ -1,0 +1,54 @@
+# Szerepkör Váltás Végpont
+
+## `PUT /user/{id}/role/{newRoleName}`
+```csharp
+[HttpPut("user/{id}/role/{newRoleName}")]
+public async Task<IActionResult> UpdateUserRole(string id, string newRoleName)
+{
+    // Érvényesíti az új szerep nevét
+    if (string.IsNullOrWhiteSpace(newRoleName))
+    {
+        return BadRequest(new { Message = "A szerep neve nem lehet üres" });
+    }
+
+    // Keresés a felhasználó ID-ja alapján
+    var user = await _dbContext.Users
+        .FirstOrDefaultAsync(u => u.Id == id);
+
+    if (user == null)
+    {
+        return NotFound(new { Message = "Felhasználó nem található" });
+    }
+
+    // Keresés a szerep név alapján (kis- és nagybetű érzéketlenül)
+    var role = await _dbContext.Roles
+        .FirstOrDefaultAsync(r => r.Name.ToLower() == newRoleName.ToLower());
+
+    if (role == null)
+    {
+        return NotFound(new { Message = "Szerep nem található" });
+    }
+
+    // Az összes meglévő szerep eltávolítása a felhasználó számára
+    var userRoles = await _dbContext.UserRoles
+        .Where(ur => ur.UserId == id)
+        .ToListAsync();
+
+    _dbContext.UserRoles.RemoveRange(userRoles);
+
+    // Az új szerep hozzáadása a felhasználóhoz
+    var userRole = new IdentityUserRole<string>
+    {
+        UserId = id,
+        RoleId = role.Id
+    };
+    await _dbContext.UserRoles.AddAsync(userRole);
+
+    // A változások mentése az adatbázisba
+    await _dbContext.SaveChangesAsync();
+
+    return Ok(new { Message = "Felhasználó szerepe sikeresen frissítve" });
+}
+```
+
+Ez a végpont lehetővé teszi a felhasználó szerepének frissítését az új szerep nevének megadásával. A végpont először ellenőrzi, hogy az új szerep neve nem üres, majd megkeresi a felhasználót és a szerepet az adatbázisban. Ha a szerep nem létezik, akkor hibát ad vissza. A végpont eltávolítja az összes korábbi szerepet a felhasználóról, és hozzárendeli az új szerepet, végül menti a változtatásokat az adatbázisba.

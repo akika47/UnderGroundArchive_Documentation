@@ -1,0 +1,98 @@
+# Jelentések Végpontok
+
+## `GET /reports`
+```csharp
+// Jelentések API
+[HttpGet("reports")]
+public async Task<IActionResult> GetAllReports()
+{
+    var reports = await _dbContext.Reports
+        .Select(r => new
+        {
+            r.ReportId,
+            r.ReporterId,
+            r.ReportedPersonId,
+            r.ReportTypeId,
+            r.ReportMessage,
+            r.IsHandled,
+            r.CreatedAt
+        })
+        .ToListAsync();
+
+    return Ok(reports);
+}
+```
+Ez a végpont visszaadja az összes jelentést, beleértve a jelentés azonosítóját, a jelentőt, a jelentett személyt, a jelentés típusát, a jelentés üzenetét, a státuszt és a létrehozás dátumát.
+
+## `GET /pendingReports`
+```csharp
+// Függőben lévő jelentések API
+[HttpGet("pendingReports")]
+public async Task<IActionResult> GetPendingReports()
+{
+    var reports = await _dbContext.Reports
+        .Where(x => x.IsHandled == false)
+        .Select(r => new
+        {
+            r.ReportId,
+            r.ReporterId,
+            r.ReportedPersonId,
+            r.ReportTypeId,
+            r.ReportMessage,
+            r.IsHandled,
+            r.CreatedAt
+        })
+        .ToListAsync();
+
+    return Ok(reports);
+}
+```
+Ez a végpont visszaadja az összes függőben lévő (kezelésre váró) jelentést.
+
+## `GET /report/{id}`
+```csharp
+// Egy adott jelentés API
+[HttpGet("report/{id}")]
+public async Task<IActionResult> GetReport(int id)
+{
+    var report = await _dbContext.Reports
+        .Where(r => r.ReportId == id)
+        .Select(r => new
+        {
+            r.ReportId,
+            r.ReporterId,
+            r.ReportedPersonId,
+            r.ReportTypeId,
+            r.ReportMessage,
+            r.IsHandled,
+            r.CreatedAt
+        })
+        .FirstOrDefaultAsync();
+
+    return report == null ? NotFound("Jelentés nem található.") : Ok(report);
+}
+```
+Ez a végpont visszaadja a megadott azonosítójú jelentést, ha létezik, vagy nem található hibát jelez.
+
+## `PUT /handleReport`
+```csharp
+// Jelentés kezelése API
+[HttpPut("handleReport")]
+public async Task<ActionResult> HandleReport(int reportId)
+{
+    var report = await _dbContext.Reports.FirstOrDefaultAsync(r => r.ReportId == reportId);
+
+    if (report == null)
+    {
+        return NotFound("Jelentés nem található.");
+    }
+
+    report.IsHandled = true;
+
+    _dbContext.Reports.Update(report);
+    await _dbContext.SaveChangesAsync();
+
+    return Ok("Jelentés státusza kezeltre lett állítva.");
+}
+```
+Ez a végpont frissíti a jelentés státuszát "kezelt" állapotra, miután feldolgozták a jelentést.

@@ -1,0 +1,254 @@
+# Komment Végpontok
+
+Itt van a kérésed szerinti végpontok a `comments` táblával kapcsolatos műveletekhez, hasonlóan a `criticRatings` végpontokhoz:
+
+## `GET /comments/{bookId}`
+```csharp
+// Az adott könyvhöz tartozó összes komment lekérése
+[HttpGet("comments/{bookId}")]
+public async Task<ActionResult<IEnumerable<CommentDTO>>> GetComments(int bookId)
+{
+    var comments = await _dbContext.Comments
+        .Where(c => c.BookId == bookId)
+        .OrderBy(c => c.CreatedAt)
+        .Include(c => c.Users) // Felhasználói információk betöltése
+        .Select(c => new CommentDTO
+        {
+            CommentId = c.CommentId,
+            BookId = c.BookId,
+            CommentMessage = c.CommentMessage,
+            ParentCommentId = c.ParentCommentId,
+            ThreadId = c.ThreadId,
+            CommenterId = c.CommenterId // Kommentelő azonosítója
+        })
+        .ToListAsync();
+
+    return Ok(comments);
+}
+```
+Ez a végpont visszaadja az összes kommentet egy adott könyvhöz, sorrendbe rendezve a létrehozási idő szerint.
+
+## `GET /comment/{id}`
+```csharp
+// Egy adott komment lekérése
+[HttpGet("comment/{id}")]
+public async Task<ActionResult<CommentDTO>> GetComment(int id)
+{
+    var comment = await _dbContext.Comments
+        .Include(c => c.Users) // Felhasználói információk betöltése
+        .FirstOrDefaultAsync(c => c.CommentId == id);
+
+    if (comment == null)
+    {
+        return NotFound();
+    }
+
+    return new CommentDTO
+    {
+        CommentId = id,
+        BookId = comment.BookId,
+        CommentMessage = comment.CommentMessage,
+        ParentCommentId = comment.ParentCommentId,
+        ThreadId = comment.ThreadId,
+        CommenterId = comment.CommenterId
+    };
+}
+```
+Ez a végpont visszaad egy adott kommentet az `id` alapján.
+
+## `POST /createComment`
+```csharp
+// Új komment létrehozása
+[HttpPost("createComment")]
+public async Task<IActionResult> CreateComment(CommentDTO commentDto)
+{
+    var bookExists = await _dbContext.Books.AnyAsync(k => k.BookId == commentDto.BookId);
+    if (!bookExists)
+    {
+        return BadRequest("A megadott könyv nem létezik.");
+    }
+
+    var commenterId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    if (string.IsNullOrEmpty(commenterId))
+    {
+        return Unauthorized("A felhasználó nincs hitelesítve.");
+    }
+
+    var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == commenterId);
+    if (user == null || user.IsMuted)
+    {
+        return Unauthorized("A felhasználó el van tiltva kommenteléstől.");
+    }
+
+    int threadId = commentDto.ParentCommentId == null ? 0 : 
+        (await _dbContext.Comments.FirstOrDefaultAsync(c => c.CommentId == commentDto.ParentCommentId))?.ThreadId ?? 0;
+
+    var comment = new Comments
+    {
+        BookId = commentDto.BookId,
+        CommentMessage = commentDto.CommentMessage,
+        CommenterId = commenterId,
+        ParentCommentId = commentDto.ParentCommentId,
+        ThreadId = threadId
+    };
+
+    _dbContext.Comments.Add(comment);
+    await _dbContext.SaveChangesAsync();
+
+    if (commentDto.ParentCommentId == null)
+    {
+        comment.ThreadId = comment.CommentId;
+        _dbContext.Comments.Update(comment);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    return CreatedAtAction("GetComment", new { id = comment.CommentId }, comment);
+}
+```
+Ez a végpont lehetővé teszi új kommentek létrehozását, ellenőrzi a felhasználó státuszát, és az új kommentekhez hozzárendeli a szálakat.
+
+## `POST /likeComment/{commentId}`
+```csharp
+// Komment kedvelése
+[HttpPost("likeComment/{commentId}")]
+public async Task<IActionResult> LikeComment(int commentId)
+{
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    if (string.IsNullOrEmpty(userId))
+    {
+        return Unauthorized("A felhasználó nincs hitelesítve.");
+    }
+
+    var comment = await _dbContext.Comments.FindAsync(commentId);
+    if (comment == null)
+    {
+        return NotFound("A komment nem található.");
+    }
+
+    var existingLike = await _dbContext.CommentLikes
+        .FirstOrDefaultAsync(cl => cl.CommentId == commentId && cl.UserId == userId);
+
+    if (existingLike != null)
+    {
+        if (existingLike.IsLike)
+        {
+            return BadRequest("Már kedvelted ezt a kommentet.");
+        }
+
+        existingLike.IsLike = true;
+        comment.Likes++;
+        comment.Dislikes--;
+    }
+    else
+    {
+        _dbContext.CommentLikes.Add(new CommentLike
+        {
+            CommentId = commentId,
+            UserId = userId,
+            IsLike = true
+        });
+        comment.Likes++;
+    }
+
+    _dbContext.Comments.Update(comment);
+    await _dbContext.SaveChangesAsync();
+
+    return Ok(new { message = "Komment sikeresen kedvelve.", likes = comment.Likes });
+}
+```
+Ez a végpont lehetővé teszi egy komment kedvelését. A felhasználó nem kedvelheti ugyanazt a kommentet kétszer, és a kedvelés frissíti a komment státuszát.
+
+## `POST /dislikeComment/{commentId}`
+```csharp
+// Komment utálása
+[HttpPost("dislikeComment/{commentId}")]
+public async Task<IActionResult> DislikeComment(int commentId)
+{
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    if (string.IsNullOrEmpty(userId))
+    {
+        return Unauthorized("A felhasználó nincs hitelesítve.");
+    }
+
+    var comment = await _dbContext.Comments.FindAsync(commentId);
+    if (comment == null)
+    {
+        return NotFound("A komment nem található.");
+    }
+
+    var existingLike = await _dbContext.CommentLikes
+        .FirstOrDefaultAsync(cl => cl.CommentId == commentId && cl.UserId == userId);
+
+    if (existingLike != null)
+    {
+        if (!existingLike.IsLike)
+        {
+            return BadRequest("Már utáltad ezt a kommentet.");
+        }
+
+        existingLike.IsLike = false;
+        comment.Likes--;
+        comment.Dislikes++;
+    }
+    else
+    {
+        _dbContext.CommentLikes.Add(new CommentLike
+        {
+            CommentId = commentId,
+            UserId = userId,
+            IsLike = false
+        });
+        comment.Dislikes++;
+    }
+
+    _dbContext.Comments.Update(comment);
+    await _dbContext.SaveChangesAsync();
+
+    return Ok(new { message = "Komment sikeresen utálva.", dislikes = comment.Dislikes });
+}
+```
+Ez a végpont lehetővé teszi egy komment utálását. A felhasználó nem utálhatja ugyanazt a kommentet kétszer, és az utálás frissíti a komment státuszát.
+
+## `PUT /modifyComment/{id}`
+```csharp
+// Egy meglévő komment módosítása
+[HttpPut("modifyComment/{id}")]
+public async Task<ActionResult> ModifyComment(int id, [FromBody] CommentDTO modifiedCommentDto)
+{
+    var existingComment = await _dbContext.Comments.FindAsync(id);
+    if (existingComment == null)
+    {
+        return NotFound("A komment nem található.");
+    }
+
+    existingComment.CommentMessage = modifiedCommentDto.CommentMessage;
+    existingComment.ModifiedAt = DateTime.Now;
+
+    _dbContext.Comments.Update(existingComment);
+    await _dbContext.SaveChangesAsync();
+
+    return NoContent();
+}
+```
+Ez a végpont lehetővé teszi egy meglévő komment módosítását.
+
+## `DELETE /deleteComment/{id}`
+```csharp
+// Egy komment törlése
+[HttpDelete("deleteComment/{id}")]
+public async Task<ActionResult> DeleteComment(int id)
+{
+    var comment = await _dbContext.Comments.FindAsync(id);
+    if (comment == null)
+    {
+        return NotFound("A komment nem található.");
+    }
+
+    _dbContext.Comments.Remove(comment);
+    await _dbContext.SaveChangesAsync();
+
+    return NoContent();
+}
+```
+Ez a végpont lehetővé teszi egy komment törlését, ha az létezik.

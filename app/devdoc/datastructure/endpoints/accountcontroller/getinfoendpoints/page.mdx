@@ -1,0 +1,119 @@
+# Információ Kérés Végpontok
+
+## `GET /ranks`
+```csharp
+[HttpGet("ranks")]
+public async Task<ActionResult<IEnumerable<Ranks>>> GetRanks()
+{
+    var ranks = await _dbContext.Ranks.ToListAsync();
+    if (ranks == null || ranks.Count == 0)
+    {
+        return NotFound(new { Message = "Nincs található rang." });
+    }
+    return Ok(ranks);
+}
+```
+
+Ez az API végpont lekéri az összes elérhető rangot az adatbázisból. Ha nincs található rang, akkor `NotFound` választ ad, megfelelő üzenettel. Ha van rang, akkor visszaadja a rangok listáját.
+
+## `GET /achievements`
+```csharp
+[HttpGet("achievements")]
+public async Task<ActionResult<IEnumerable<Achievements>>> GetAchievements()
+{
+    var achievements = await _dbContext.Achievements
+        .Include(a => a.CompletedAchievements)
+        .ToListAsync();
+    if (achievements == null || achievements.Count == 0)
+    {
+        return NotFound(new { Message = "Nincs található eredmény." });
+    }
+    return Ok(achievements);
+}
+```
+
+Ez az API végpont lekéri az összes elérhető eredményt, valamint a hozzájuk tartozó befejezett eredményeket. Ha nincs eredmény, akkor `NotFound` választ ad, ha pedig van, akkor visszaadja az eredmények listáját.
+
+## `GET /subscriptions`
+```csharp
+[HttpGet("subscriptions")]
+public async Task<ActionResult<IEnumerable<Subscription>>> GetSubscriptions()
+{
+    var subscriptions = await _dbContext.Subscription.ToListAsync();
+    if (subscriptions == null || subscriptions.Count == 0)
+    {
+        return NotFound(new { Message = "Nincs található előfizetés." });
+    }
+    return Ok(subscriptions);
+}
+```
+
+Ez az API végpont lekéri az összes előfizetést az adatbázisból. Ha nincs található előfizetés, akkor `NotFound` választ ad. Ha van előfizetés, akkor visszaadja az előfizetések listáját.
+
+## `Patch /updateProfilePicture`
+```csharp
+[HttpPatch("updateProfilePicture")]
+public async Task<IActionResult> UpdateProfilePicture([FromBody] UpdateProfilePictureDTO request)
+{
+    if (request.ProfilePictureId <= 0)
+    {
+        return BadRequest("Érvénytelen ProfilePictureId.");
+    }
+
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    if (string.IsNullOrEmpty(userId))
+    {
+        return Unauthorized("Felhasználó nem azonosítható.");
+    }
+
+    var user = await _userManager.FindByIdAsync(userId);
+    if (user == null)
+    {
+        return NotFound("Felhasználó nem található.");
+    }
+
+    user.ProfilePictureId = request.ProfilePictureId;
+    var result = await _userManager.UpdateAsync(user);
+
+    if (!result.Succeeded)
+    {
+        return StatusCode(500, "Hiba történt a frissítés során.");
+    }
+
+    return Ok(new { message = "Profilkép frissítve!", profilePictureId = user.ProfilePictureId });
+}
+```
+
+Ez az API végpont lehetővé teszi a felhasználó számára, hogy frissítse a profilképét egy új `ProfilePictureId` beállításával. Ha a `ProfilePictureId` érvénytelen, vagy ha a felhasználó nincs azonosítva, akkor `BadRequest` vagy `Unauthorized` választ ad. Ha a frissítés sikertelen, akkor `StatusCode(500)` hibát ad.
+
+## `Patch /updaterank`
+```csharp
+[HttpPatch("{userId}/updaterank")]
+public async Task<IActionResult> UpdateRank(string userId)
+{
+    var user = await _dbContext.Users.FindAsync(userId);
+    if (user == null)
+    {
+        return NotFound("Felhasználó nem található.");
+    }
+
+    var ranks = await _dbContext.Ranks
+        .OrderBy(r => r.PointsRequired)
+        .ToListAsync();
+
+    var currentRank = ranks.LastOrDefault(r => r.PointsRequired <= user.RankPoints);
+
+    if (currentRank != null && user.RankId != currentRank.RankId)
+    {
+        user.RankId = currentRank.RankId;
+        _dbContext.Users.Update(user);
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { message = "Rang sikeresen frissítve!", newRankId = currentRank.RankId });
+    }
+
+    return Ok(new { message = "Nincs szükség rangfrissítésre." });
+}
+```
+
+Ez az API végpont frissíti a felhasználó rangját a rendelkezésére álló pontok alapján. Ha a felhasználó aktuális rangja alacsonyabb, mint az új ranghoz szükséges pontszám, akkor frissíti a rangot az adatbázisban. Ha nem szükséges frissítés, akkor azt jelzi, hogy nincs szükség rangváltásra.

@@ -1,0 +1,25 @@
+# Metadata Végpontok
+
+## `GET /genres`
+```csharp
+// Műfajok API
+[HttpGet("genres")]
+public async Task<IActionResult> GetGenres()
+{
+    var genres = await _context.Genre.ToListAsync();
+    return Ok(genres);
+}
+```
+Ez a végpont visszaadja az összes elérhető műfajt.
+
+## `GET /categories`
+```csharp
+// Kategóriák API
+[HttpGet("categories")]
+public async Task<IActionResult> GetCategories()
+{
+    var categories = await _context.Categories.ToListAsync();
+    return Ok(categories);
+}
+```
+Ez a végpont visszaadja az összes elérhető kategóriát.

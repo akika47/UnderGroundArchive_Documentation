@@ -1,0 +1,98 @@
+# Kérés Kezelő Végpontok
+
+## `GET /myrequests`
+```csharp
+// Minden kérelem lekérése a felhasználó számára
+[HttpGet("myrequests")]
+public async Task<IActionResult> GetAllRequests()
+{
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    if (string.IsNullOrEmpty(userId))
+    {
+        return BadRequest("User ID is required.");
+    }
+
+    var requests = await _dbContext.Requests
+        .Where(r => r.RequesterId == userId)
+        .Select(r => new
+        {
+            r.RequestId,
+            r.RequesterId,
+            r.RequestMessage,
+            r.RequestDate,
+            r.IsApproved,
+            r.IsHandled,
+            r.RequestType
+        })
+        .ToListAsync();
+
+    return Ok(requests);
+}
+```
+Ez a végpont visszaadja az összes kérelmet, amelyet a bejelentkezett felhasználó nyújtott be. A válasz tartalmazza a kérelmek azonosítóját, üzenetét, dátumát, státuszát (jóváhagyva vagy kezelve), valamint típusát.
+
+## `GET /myrequest/{id}`
+```csharp
+// Egy konkrét kérelem lekérése a felhasználó számára
+[HttpGet("myrequest/{id}")]
+public async Task<IActionResult> GetRequest(int id, [FromQuery] string userId)
+{
+    if (string.IsNullOrEmpty(userId))
+    {
+        return BadRequest("User ID is required.");
+    }
+    
+    var request = await _dbContext.Requests
+        .Where(r => r.RequesterId == userId)
+        .Where(j => j.RequestId == id)
+        .Select(r => new
+        {
+            r.RequestId,
+            r.RequesterId,
+            r.RequestMessage,
+            r.RequestDate,
+            r.IsApproved,
+            r.IsHandled,
+            r.RequestType
+        })
+        .FirstOrDefaultAsync();
+
+    return request == null ? NotFound("Request not found.") : Ok(request);
+}
+```
+Ez a végpont visszaadja egy adott kérelem adatait a felhasználó számára az `id` és a `userId` alapján. Ha a kérelem nem található, 404-es választ ad vissza.
+
+## `POST /createRequest`
+```csharp
+// Új kérelem létrehozása
+[HttpPost("createRequest")]
+public async Task<IActionResult> CreateRequest([FromBody] RequestDTO request)
+{
+    var requesterId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    Console.WriteLine($"Token validáció: {User.Identity.IsAuthenticated}");
+    Console.WriteLine($"Felhasználó azonosító: {requesterId}");
+
+    if (string.IsNullOrEmpty(requesterId))
+    {
+        return Unauthorized("User is not authenticated.");
+    }
+
+    var newRequest = new Requests
+    {
+        RequesterId = requesterId,
+        RequestMessage = request.RequestMessage,
+        RequestType = request.RequestType,
+        RequestDate = DateTime.Now, 
+        IsApproved = false,
+        IsHandled = false
+    };
+
+    _dbContext.Requests.Add(newRequest);
+    await _dbContext.SaveChangesAsync();
+
+    return Ok(new { Message = "Request created successfully", RequestId = newRequest.RequestId });
+}
+```
+Ez a végpont egy új kérelmet hoz létre a bejelentkezett felhasználó számára. Az új kérelem tartalmazza az üzenetet, típusát, valamint azt, hogy még nem lett jóváhagyva vagy kezelve. Ha a felhasználó nincs bejelentkezve, 401-es választ ad vissza.

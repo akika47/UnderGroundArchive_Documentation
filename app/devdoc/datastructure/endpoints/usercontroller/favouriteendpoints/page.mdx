@@ -1,0 +1,140 @@
+# Kedvenc Könyvek Végpontok
+
+## `GET /favourites`
+```csharp
+// A felhasználó összes kedvenc könyvének lekérése
+[HttpGet("favourites")]
+public async Task<IActionResult> GetFavourites()
+{
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null)
+    {
+        return Unauthorized();
+    }
+
+    var favoriteBooks = await _dbContext.Favourites
+        .Where(f => f.UserId == user.Id)
+        .Select(f => f.Book)
+        .ToListAsync();
+
+    return Ok(favoriteBooks);
+}
+```
+Ez a végpont visszaadja a felhasználó összes kedvenc könyvét.
+
+## `GET /myfavourites`
+```csharp
+// A felhasználó kedvenc könyveinek részletes lekérése
+[HttpGet("myfavourites")]
+public async Task<IActionResult> GetMyFavourites()
+{
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    if (string.IsNullOrEmpty(userId))
+    {
+        return BadRequest("User ID is required.");
+    }
+
+    var requests = await _dbContext.Favourites
+        .Where(r => r.UserId == userId)
+        .Include(r => r.Book)
+        .Select(r => new
+        {
+            r.FavouriteId,
+            r.BookId,
+            BookName = r.Book != null ? r.Book.BookName : null,
+            r.ChapterNumber
+        })
+        .ToListAsync();
+
+    return Ok(requests);
+}
+```
+Ez a végpont részletes információkat ad vissza a felhasználó kedvenc könyveiről, beleértve a könyv nevét és az olvasott fejezetet.
+
+## `POST /addFavourite/{bookId}`
+```csharp
+// Könyv hozzáadása a kedvencekhez
+[HttpPost("addFavourite/{bookId}")]
+public async Task<IActionResult> AddFavourite(int bookId)
+{
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null)
+    {
+        return Unauthorized();
+    }
+
+    var bookExists = await _dbContext.Books.AnyAsync(b => b.BookId == bookId);
+    if (!bookExists)
+    {
+        return BadRequest("The specified book does not exist.");
+    }
+
+    var alreadyFavorite = await _dbContext.Favourites.AnyAsync(f => f.UserId == user.Id && f.BookId == bookId);
+    if (alreadyFavorite)
+    {
+        return BadRequest("This book is already in your favorites.");
+    }
+
+    var favorite = new Favourites { UserId = user.Id, BookId = bookId };
+    _dbContext.Favourites.Add(favorite);
+    await _dbContext.SaveChangesAsync();
+
+    return Ok(new { message = "Book added to favorites." });
+}
+```
+Ez a végpont lehetővé teszi a felhasználók számára, hogy egy könyvet hozzáadjanak a kedvenceikhez, ha az még nincs ott.
+
+## `DELETE /removeFavourite/{bookId}`
+```csharp
+// Könyv eltávolítása a kedvencekből
+[HttpDelete("removeFavourite/{bookId}")]
+public async Task<IActionResult> RemoveFavourite(int bookId)
+{
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null)
+    {
+        return Unauthorized();
+    }
+
+    var favorite = await _dbContext.Favourites.FirstOrDefaultAsync(f => f.UserId == user.Id && f.BookId == bookId);
+    if (favorite == null)
+    {
+        return BadRequest("This book is not in your favorites.");
+    }
+
+    _dbContext.Favourites.Remove(favorite);
+    await _dbContext.SaveChangesAsync();
+
+    return Ok(new { message = "Book removed from favorites." });
+}
+```
+Ez a végpont lehetővé teszi, hogy a felhasználók eltávolítsák egy könyvet a kedvenceik közül.
+
+## `PATCH /updateLastReadChapter/{bookId}`
+```csharp
+// Az utoljára olvasott fejezet frissítése
+[HttpPatch("updateLastReadChapter/{bookId}")]
+public async Task<IActionResult> UpdateLastReadChapter(int bookId, [FromBody] int chapterNumber)
+{
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null)
+    {
+        return Unauthorized();
+    }
+
+    var favorite = await _dbContext.Favourites
+        .FirstOrDefaultAsync(f => f.BookId == bookId && f.UserId == user.Id);
+
+    if (favorite == null)
+    {
+        return NotFound("Favorite not found.");
+    }
+
+    favorite.ChapterNumber = chapterNumber;
+    await _dbContext.SaveChangesAsync();
+
+    return Ok("Last read chapter updated successfully.");
+}
+```
+Ez a végpont lehetővé teszi a felhasználók számára, hogy frissítsék a kedvenc könyvük utoljára olvasott fejezetét.

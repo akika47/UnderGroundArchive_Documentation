@@ -1,0 +1,68 @@
+# Felhasználói Státusz Végpontok
+
+## `PUT /muteStatusChange`
+```csharp
+// Felhasználói néma állapot módosítása API
+[HttpPut("muteStatusChange")]
+public async Task<ActionResult> ChangeMuteStatus(string userId)
+{
+    var user = await _userManager.FindByIdAsync(userId);
+    if (user == null)
+    {
+        return NotFound("Felhasználó nem található");
+    }
+    if (user.IsMuted)
+    {
+        user.IsMuted = false;
+    }
+    else
+    {
+        user.IsMuted = true;
+    }
+
+    var result = await _userManager.UpdateAsync(user);
+    if (result.Succeeded)
+    {
+        return Ok("Mute status changed");
+    }
+    else
+    {
+        return BadRequest("Hiba történt");
+    }
+}
+```
+Ez a végpont módosítja a felhasználó néma státuszát (mute), ha a felhasználó már némítva van, visszaállítja, különben beállítja némára.
+
+## `PUT /banStatusChanged`
+```csharp
+// Felhasználói kitiltás állapotának módosítása API
+[HttpPut("banStatusChanged")]
+public async Task<ActionResult> ChangeBanStatus(string userId)
+{
+    var user = await _userManager.FindByIdAsync(userId);
+    if (user == null)
+    {
+        return NotFound("Felhasználó nem található");
+    }
+    if (user.IsBanned)
+    {
+        user.IsBanned = false;
+    }
+    else
+    {
+        user.IsBanned = true;
+    }
+
+    var result = await _userManager.UpdateAsync(user);
+
+    if (result.Succeeded)
+    {
+        return Ok("Ban status changed");
+    }
+    else
+    {
+        return BadRequest("Hiba történt");
+    }
+}
+```
+Ez a végpont módosítja a felhasználó kitiltási státuszát (ban), ha a felhasználó már ki van tiltva, visszaállítja, különben kitiltja.

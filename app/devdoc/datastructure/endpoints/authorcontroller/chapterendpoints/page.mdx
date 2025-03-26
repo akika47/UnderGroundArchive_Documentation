@@ -1,0 +1,191 @@
+# Fejezet Kezelés Végpontok
+
+## `GET /chapters/{bookId}`
+
+```csharp
+[HttpGet("chapters/{bookId}")]
+public async Task<IActionResult> GetChaptersByBook(int bookId)
+{
+    var chapters = await _dbContext.Chapters
+        .Where(c => c.BookId == bookId)
+        .OrderBy(c => c.ChapterNumber)
+        .ToListAsync();
+
+    if (chapters == null) return NotFound();
+
+    return Ok(chapters);
+}
+```
+Ez a végpont az összes fejezetet visszaadja egy adott könyvhöz, sorrendben a fejezetek száma szerint.
+
+## `GET /chapters/{bookId}/totalChapters`
+
+```csharp
+[HttpGet("chapters/{bookId}/totalChapters")]
+public async Task<IActionResult> GetChaptersByBookCount(int bookId)
+{
+    if (bookId <= 0)
+    {
+        return BadRequest("Érvénytelen könyvazonosító.");
+    }
+
+    int totalChapters = await _dbContext.Chapters
+        .Where(c => c.BookId == bookId)
+        .CountAsync();
+
+    return Ok(new { totalChapters });
+}
+```
+Ez a végpont visszaadja a fejezetek számát egy adott könyvhöz.
+
+## `GET /chapter/{bookId}/{chapterNumber}`
+
+```csharp
+[HttpGet("chapter/{bookId}/{chapterNumber}")]
+public async Task<IActionResult> GetSpecificChapter(int bookId, int chapterNumber)
+{
+    var chapter = await _dbContext.Chapters
+        .Where(c => c.BookId == bookId && c.ChapterNumber == chapterNumber)
+        .FirstOrDefaultAsync();
+
+    if (chapter == null) return NotFound();
+
+    return Ok(chapter);
+}
+```
+Ez a végpont egy adott könyv egy adott fejezetét adja vissza, a könyv és a fejezet száma alapján.
+
+## `POST /publishChapter`
+
+```csharp
+[HttpPost("publishChapter")]
+public async Task<IActionResult> AddChapter([FromBody] ChapterDTO chapterDto)
+{
+    var book = await _dbContext.Books.FirstOrDefaultAsync(b => b.BookId == chapterDto.BookId);
+    if (book == null)
+    {
+        return BadRequest("The specified book does not exist.");
+    }
+
+    var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    if (string.IsNullOrEmpty(currentUserId))
+    {
+        return Unauthorized("User is not authenticated.");
+    }
+
+    if (book.AuthorId != currentUserId)
+    {
+        return Unauthorized("You are not authorized to publish a chapter for this book.");
+    }
+
+    var chapter = new Chapters
+    {
+        BookId = chapterDto.BookId,
+        ChapterNumber = chapterDto.ChapterNumber,
+        ChapterTitle = chapterDto.ChapterTitle,
+        ChapterContent = chapterDto.ChapterContent
+    };
+
+    _dbContext.Chapters.Add(chapter);
+    await _dbContext.SaveChangesAsync();
+
+    return CreatedAtAction(nameof(GetSpecificChapter), new { bookId = chapterDto.BookId, chapterNumber = chapterDto.ChapterNumber }, chapter);
+}
+```
+Ez a végpont egy új fejezetet ad hozzá a könyvhöz. Ellenőrzi, hogy a felhasználó jogosult-e a fejezet hozzáadására, és létrehozza az új fejezetet.
+
+## `PUT /modifyChapter/{chapterId}`
+
+```csharp
+[HttpPut("modifyChapter/{chapterId}")]
+public async Task<IActionResult> UpdateChapter(int chapterId, [FromBody] ChapterDTO chapterDto)
+{
+    var chapter = await _dbContext.Chapters.FindAsync(chapterId);
+    if (chapter == null)
+    {
+        return NotFound("The specified chapter does not exist.");
+    }
+
+    var book = await _dbContext.Books.FirstOrDefaultAsync(b => b.BookId == chapterDto.BookId);
+    if (book == null)
+    {
+        return BadRequest("The specified book does not exist.");
+    }
+
+    var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    if (string.IsNullOrEmpty(currentUserId))
+    {
+        return Unauthorized("User is not authenticated.");
+    }
+
+    if (book.AuthorId != currentUserId)
+    {
+        return Unauthorized("You are not authorized to modify this chapter.");
+    }
+
+    chapter.ChapterNumber = chapterDto.ChapterNumber;
+    chapter.ChapterTitle = chapterDto.ChapterTitle;
+    chapter.ChapterContent = chapterDto.ChapterContent;
+
+    await _dbContext.SaveChangesAsync();
+
+    return NoContent();
+}
+```
+Ez a végpont egy fejezetet módosít, ha a felhasználó jogosult rá. Ha a fejezet nem található vagy a felhasználó nem jogosult, akkor hibaüzenetet ad vissza.
+
+## `DELETE /deleteChapter/{chapterId}`
+
+```csharp
+[HttpDelete("deleteChapter/{chapterId}")]
+public async Task<IActionResult> DeleteChapter(int chapterId)
+{
+    var chapter = await _dbContext.Chapters.FindAsync(chapterId);
+    if (chapter == null)
+    {
+        return NotFound("The specified chapter does not exist.");
+    }
+
+    var book = await _dbContext.Books.FirstOrDefaultAsync(b => b.BookId == chapter.BookId);
+    if (book == null)
+    {
+        return BadRequest("The specified book does not exist.");
+    }
+
+    var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    if (string.IsNullOrEmpty(currentUserId))
+    {
+        return Unauthorized("User is not authenticated.");
+    }
+
+    if (book.AuthorId != currentUserId)
+    {
+        return Unauthorized("You are not authorized to delete this chapter.");
+    }
+
+    var affectedUsers = await _dbContext.Favourites
+        .Where(f => f.BookId == book.BookId && f.ChapterNumber == chapter.ChapterNumber)
+        .ToListAsync();
+
+    if (affectedUsers.Any())
+    {
+        var closestChapter = await _dbContext.Chapters
+            .Where(c => c.BookId == book.BookId && c.ChapterNumber != chapter.ChapterNumber)
+            .OrderByDescending(c => c.ChapterNumber)
+            .FirstOrDefaultAsync();
+
+        foreach (var user in affectedUsers)
+        {
+            user.ChapterNumber = closestChapter?.ChapterNumber;
+        }
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    _dbContext.Chapters.Remove(chapter);
+    await _dbContext.SaveChangesAsync();
+
+    return NoContent();
+}
+```
+Ez a végpont egy fejezetet töröl, ha a felhasználó jogosult rá. Ha a fejezet törlése hatással van más felhasználókra (akik a fejezetet kedvelik), akkor azokat a legközelebbi fejezethez rendeli.

@@ -1,0 +1,150 @@
+# Bejelentkezés/Regisztráció Végpontok
+
+## `POST /login`
+```csharp
+[HttpPost("login")]
+public async Task<IActionResult> Login([FromBody] UserLoginDTO loginDto)
+{
+    if (loginDto == null || string.IsNullOrEmpty(loginDto.Login) || string.IsNullOrEmpty(loginDto.Password))
+    {
+        return BadRequest("Email és jelszó szükséges.");
+    }
+
+    ApplicationUser user = null;
+    if (loginDto.Login.Contains("@"))
+    {
+        user = await _userManager.FindByEmailAsync(loginDto.Login);
+    }
+    else
+    {
+        user = await _userManager.FindByNameAsync(loginDto.Login);
+    }
+
+    if (user == null)
+    {
+        return Unauthorized("Hibás felhasználónév vagy jelszó.");
+    }
+
+    var result = await _signInManager.PasswordSignInAsync(user, loginDto.Password, false, false);
+    if (user.IsBanned)
+    {
+        return Unauthorized("Ez a felhasználó ki van tiltva");
+    }
+    if (result.Succeeded)
+    {
+        var token = GenerateJwtToken(user);
+        return Ok(new { jwt = token });
+    }
+    else
+    {
+        return Unauthorized("Hibás felhasználónév vagy jelszó.");
+    }
+}
+```
+Bejelentkezés felhasználónév vagy email és jelszó megadásával. Ha a hitelesítés sikeres, JWT tokent ad vissza. Kitiltott felhasználók nem jelentkezhetnek be.
+
+## `POST /google-login`
+```csharp
+[HttpPost("google-login")]
+public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto request)
+{
+    var settings = new GoogleJsonWebSignature.ValidationSettings()
+    {
+        IssuedAtClockTolerance = TimeSpan.FromMinutes(5),
+        Audience = new List<string> { "500480770304-ll53e6gspf512sj82sotjmg36vcrqid7.apps.googleusercontent.com" }
+    };
+
+    try
+    {
+        var payload = await GoogleJsonWebSignature.ValidateAsync(request.Token, settings);
+        var user = await _userManager.FindByEmailAsync(payload.Email);
+        if (user == null)
+        {
+            user = new ApplicationUser
+            {
+                UserName = payload.FamilyName ?? payload.GivenName ?? payload.Email,
+                Email = payload.Email,
+                PhoneNumber = await GetPhoneNumberFromGoogle(request.Token),
+                Country = payload.Locale ?? "Unknown",
+                BirthDate = null,
+                RankId = 1,
+                SubscriptionId = 1
+            };
+
+            var result = await _userManager.CreateAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+        }
+
+        await _userManager.AddToRoleAsync(user, "User");
+        var jwtToken = GenerateJwtToken(user);
+        return Ok(new { jwt = jwtToken });
+    }
+    catch (InvalidJwtException e)
+    {
+        return BadRequest($"Invalid Google token: {e.Message}");
+    }
+}
+```
+Google fiókkal történő bejelentkezés. Ha a felhasználó még nem létezik, létrehoz egy új fiókot alapértelmezett beállításokkal.
+
+## `POST /register`
+```csharp
+[HttpPost("register")]
+public async Task<IActionResult> Register([FromBody] UserRegistrationDTO newUser)
+{
+    if (newUser == null || string.IsNullOrEmpty(newUser.Name) ||
+        string.IsNullOrEmpty(newUser.Email) ||
+        string.IsNullOrEmpty(newUser.Password))
+    {
+        return BadRequest(new { errorCode = "MISSING_FIELDS", message = "Hiányzó kötelező mezők." });
+    }
+
+    var existingEmail = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == newUser.Email);
+    var existingName = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == newUser.Name);
+    if (existingEmail != null)
+    {
+        return BadRequest(new { errorCode = "EMAIL_ALREADY_EXISTS", message = "A felhasználó már létezik." });
+    }
+    else if (existingName != null)
+    {
+        return BadRequest(new { errorCode = "USERNAME_ALREADY_EXISTS", message = "A felhasználó már létezik." });
+    }
+
+    var user = new ApplicationUser
+    {
+        UserName = newUser.Name,
+        Email = newUser.Email,
+        BirthDate = newUser.BirthDate,
+        Country = newUser.Country,
+        PhoneNumber = newUser.PhoneNumber,
+        RankId = 1,
+        SubscriptionId = 1,
+    };
+
+    var result = await _userManager.CreateAsync(user, newUser.Password);
+    if (!result.Succeeded)
+    {
+        var errorMessages = result.Errors.Select(e => e.Description).ToArray();
+        return BadRequest(new { errorCode = "REGISTRATION_FAILED", errors = errorMessages });
+    }
+
+    await _userManager.AddToRoleAsync(user, "User");
+
+    return Ok(new { message = "A felhasználó sikeresen regisztrálva." });
+}
+```
+Új felhasználó regisztrációja név, email és jelszó megadásával. Ellenőrzi, hogy az email vagy felhasználónév már létezik-e. Sikeres regisztráció esetén alapértelmezett szerepkörrel látja el a felhasználót.
+
+## `POST /logout`
+```csharp
+[HttpPost("logout")]
+[Authorize]
+public IActionResult Logout()
+{
+    return Ok(new { message = "Sikeres kijelentkezés." });
+}
+```
+Kijelentkeztetés (bár a backend oldalán nincs szükség külön műveletre, csak egy sikeres válasz küldése történik).

@@ -1,0 +1,99 @@
+# Felhasználó Végpontok
+
+## `GET /user/{id}`
+```csharp
+// Felhasználó adatainak lekérése API
+[HttpGet("user/{id}")]
+public async Task<IActionResult> GetUser(string id)
+{
+    var user = await _dbContext.Users
+        .Where(u => u.Id == id)
+        .Select(user => new
+        {
+            user.Id,
+            user.UserName,
+            user.Email,
+            user.JoinDate,
+            user.BirthDate,
+            user.Country,
+            user.RankPoints,
+            user.Balance,
+            user.IsMuted,
+            user.IsBanned,
+            RoleName = _dbContext.UserRoles
+                        .Where(ur => ur.UserId == user.Id)
+                        .Join(_dbContext.Roles,
+                              ur => ur.RoleId,
+                              r => r.Id,
+                              (ur, r) => r.Name)
+                        .FirstOrDefault(),
+            RankName = _dbContext.Ranks
+                        .Where(r => r.RankId == user.RankId)
+                        .Select(r => r.RankName)
+                        .FirstOrDefault(),
+            SubscriptionName = _dbContext.Subscription
+                        .Where(s => s.SubscriptionId == user.SubscriptionId)
+                        .Select(s => s.SubscriptionName)
+                        .FirstOrDefault()
+        })
+        .SingleOrDefaultAsync();
+
+    if (user == null)
+    {
+        return NotFound(new { Message = "User not found" });
+    }
+
+    return Ok(user);
+}
+```
+Ez a végpont visszaadja a felhasználó adatait az `id` alapján, beleértve a felhasználó nevét, email címét, születési dátumát, rangját, egyenlegét, és a hozzá tartozó szerepkört, rangot és előfizetést.
+
+## `GET /me`
+```csharp
+// Jelenlegi felhasználó adatainak lekérése API
+[HttpGet("me")]
+public async Task<IActionResult> GetCurrentUser()
+{
+    // A tokenből kinyert felhasználói ID (a JWT-ban található)
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    if (userId == null)
+    {
+        return Unauthorized(); // Ha nincs ID, akkor 401-es válasz
+    }
+
+    // Felhasználó lekérése az ID alapján, csatlakoztatva a szerepköröket
+    var user = await _dbContext.Users
+        .Where(u => u.Id == userId)
+        .Select(u => new
+        {
+            u.Id,
+            u.UserName,
+            u.Email,
+            u.PhoneNumber,
+            u.Country,
+            u.BirthDate,
+            u.RankId,
+            u.RankPoints,
+            u.Theme,
+            u.ProfilePictureId,
+            u.SubscriptionId,
+            Role = _dbContext.UserRoles
+                .Where(ur => ur.UserId == u.Id)
+                .Join(_dbContext.Roles,
+                      ur => ur.RoleId,
+                      r => r.Id,
+                      (ur, r) => r.Name)
+                .FirstOrDefault()
+        })
+        .FirstOrDefaultAsync();
+
+    if (user == null)
+    {
+        return NotFound(); // Ha nincs ilyen felhasználó, akkor 404
+    }
+
+    return Ok(user); // A felhasználó adatainak visszaadása
+}
+```
+Ez a végpont visszaadja a jelenlegi felhasználó adatait, amelyeket a JWT-ból nyerünk ki. Az eredmény tartalmazza a felhasználó nevét, email címét, telefonszámát, rangját, pontjait, témáját, profilképét és előfizetését. Ha a felhasználó nem található, 404-es hiba kerül visszaadásra.

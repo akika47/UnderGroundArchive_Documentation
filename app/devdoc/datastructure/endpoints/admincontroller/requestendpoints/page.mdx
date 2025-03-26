@@ -1,0 +1,130 @@
+# Kérés Végpontok
+
+## `GET /requests`
+```csharp
+[HttpGet("requests")]
+public async Task<IActionResult> GetAllRequests()
+{
+    var requests = await _dbContext.Requests
+        .Select(r => new
+        {
+            r.RequestId,
+            r.RequesterId,
+            r.RequestMessage,
+            r.RequestDate,
+            r.IsApproved,
+            r.RequestType
+        })
+        .ToListAsync();
+
+    return Ok(requests);
+}
+```
+Ez a végpont az összes kérést visszaadja, beleértve a kérés azonosítóját, kérő azonosítóját, a kérés üzenetét, dátumát, jóváhagyási státuszát és kérés típusát.
+
+## `GET /pendingRequests`
+```csharp
+[HttpGet("pendingRequests")]
+public async Task<IActionResult> GetPendingRequests()
+{
+    var requests = await _dbContext.Requests
+        .Where(x => x.IsHandled == false)
+        .Select(r => new
+        {
+            r.RequestId,
+            r.RequesterId,
+            r.RequestMessage,
+            r.RequestDate,
+            r.IsApproved,
+            r.IsHandled,
+            r.RequestType
+        })
+        .ToListAsync();
+
+    return Ok(requests);
+}
+```
+Ez a végpont azokat a kérelmeket adja vissza, amelyeket még nem kezeltek, beleértve azok kérés azonosítóját, kérő azonosítóját, üzenetét, dátumát, jóváhagyási státuszát és kezelés státuszát.
+
+## `GET /request/{id}`
+```csharp
+[HttpGet("request/{id}")]
+public async Task<IActionResult> GetRequest(int id)
+{
+    var request = await _dbContext.Requests
+        .Where(j => j.RequestId == id)
+        .Select(r => new
+        {
+            r.RequestId,
+            r.RequesterId,
+            r.RequestMessage,
+            r.RequestDate,
+            r.IsApproved,
+            r.IsHandled,
+            r.RequestType
+        })
+        .FirstOrDefaultAsync();
+
+    return request == null ? NotFound("Kérés nem található.") : Ok(request);
+}
+```
+Ez a végpont egy adott kérelmet ad vissza azonosító alapján. Ha a kérés nem található, akkor "Kérés nem található" üzenetet ad vissza.
+
+## `PATCH /approveRequest`
+```csharp
+[HttpPatch("approveRequest")]
+public async Task<ActionResult> ApproveRequest(int requestId)
+{
+    var request = await _dbContext.Requests.FirstOrDefaultAsync(r => r.RequestId == requestId);
+
+    if (request == null)
+    {
+        return NotFound("Kérés nem található.");
+    }
+
+    request.IsApproved = true;
+    request.IsHandled = true;
+
+    if (request.RequestType == 2)
+    {
+        await UpdateUserRole(request.RequesterId, "Critic");
+    }
+    else if (request.RequestType == 1)
+    {
+        await UpdateUserRole(request.RequesterId, "Author");
+    }
+    else
+    {
+        return BadRequest("Hibás kérés típus.");
+    }
+
+    _dbContext.Requests.Update(request);
+    await _dbContext.SaveChangesAsync();
+
+    return Ok("Kérés státusza elfogadva.");
+}
+```
+Ez a végpont egy kérést elfogad, és frissíti a kérés státuszát. Az adott kérés típusának megfelelően frissíti a felhasználói szerepkört (Author vagy Critic).
+
+## `PATCH /denyRequest`
+```csharp
+[HttpPatch("denyRequest")]
+public async Task<ActionResult> DenyRequest(int requestId)
+{
+    var request = await _dbContext.Requests.FirstOrDefaultAsync(r => r.RequestId == requestId);
+
+    if (request == null)
+    {
+        return NotFound("Kérés nem található.");
+    }
+
+    request.IsApproved = false;
+    request.IsHandled = true;
+
+    _dbContext.Requests.Update(request);
+    await _dbContext.SaveChangesAsync();
+
+    return Ok("Kérés státusza elutasítva.");
+}
+```
+Ez a végpont elutasít egy kérelmet, és a státuszát "elutasítva"-ra frissíti.

@@ -1,0 +1,35 @@
+# Téma frissítése
+
+## `PUT /updateTheme`
+```csharp
+[HttpPut("updateTheme")]
+public async Task<IActionResult> UpdateTheme([FromBody] ThemeDTO request)
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);  // Felhasználó ID-jának lekérése
+
+    if (userId == null)
+    {
+        return Unauthorized();
+    }
+
+    var user = await _userManager.FindByIdAsync(userId);
+    if (user == null)
+    {
+        return NotFound("Felhasználó nem található");
+    }
+
+    user.Theme = request.Theme;  // Téma frissítése
+
+    var result = await _userManager.UpdateAsync(user);
+    if (result.Succeeded)
+    {
+        return Ok("Téma frissítve");
+    }
+    else
+    {
+        return BadRequest("Hiba történt a téma frissítésekor");
+    }
+}
+```
+
+Ez a végpont lehetővé teszi a bejelentkezett felhasználó számára, hogy frissítse a saját témabeállítását. A rendszer először azonosítja a felhasználót, majd frissíti az adatbázisban tárolt témáját.

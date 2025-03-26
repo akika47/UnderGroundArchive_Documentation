@@ -1,0 +1,53 @@
+# Fejezet Végpontok
+
+## `GET /chapters/{bookId}`
+```csharp
+[HttpGet("chapters/{bookId}")]
+public async Task<IActionResult> GetChaptersByBook(int bookId)
+{
+    var chapters = await _dbContext.Chapters
+        .Where(c => c.BookId == bookId)
+        .OrderBy(c => c.ChapterNumber)
+        .ToListAsync();
+
+    if (chapters == null) return NotFound();
+
+    return Ok(chapters);
+}
+```
+Ez a végpont az adott könyvhöz tartozó összes fejezetet adja vissza, sorrendben a fejezet számok alapján.
+
+## `GET /chapter/{bookId}/{chapterNumber}`
+```csharp
+[HttpGet("chapter/{bookId}/{chapterNumber}")]
+public async Task<IActionResult> GetSpecificChapter(int bookId, int chapterNumber)
+{
+    var chapter = await _dbContext.Chapters
+        .Where(c => c.BookId == bookId && c.ChapterNumber == chapterNumber)
+        .FirstOrDefaultAsync();
+
+    if (chapter == null) return NotFound();
+
+    return Ok(chapter);
+}
+```
+Ez a végpont egy adott könyv és fejezet szám alapján visszaadja a megfelelő fejezetet.
+
+## `GET /chapters/{bookId}/totalChapters`
+```csharp
+[HttpGet("chapters/{bookId}/totalChapters")]
+public async Task<IActionResult> GetChaptersByBookCount(int bookId)
+{
+    if (bookId <= 0)
+    {
+        return BadRequest("Érvénytelen könyvazonosító.");
+    }
+
+    int totalChapters = await _dbContext.Chapters
+        .Where(c => c.BookId == bookId)
+        .CountAsync();
+
+    return Ok(new { totalChapters });
+}
+```
+Ez a végpont visszaadja egy adott könyv fejezeteinek számát.

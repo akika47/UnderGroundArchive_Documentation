@@ -2,5 +2,6 @@
 export default {
     tools: "Eszközök 🛠️",
     resources: "Források 🔥",
+    datastructure: "Adatszerkezet"
   };
   

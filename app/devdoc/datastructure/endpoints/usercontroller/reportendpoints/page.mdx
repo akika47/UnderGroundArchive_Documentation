@@ -1,0 +1,96 @@
+# Jelentések Kezelése Végpontok
+
+## `GET /myreports`
+```csharp
+// Minden jelentés lekérése a felhasználó számára
+[HttpGet("myreports")]
+public async Task<IActionResult> GetAllReports([FromQuery] string userId)
+{
+    if (string.IsNullOrEmpty(userId))
+    {
+        return BadRequest("User ID is required.");
+    }
+
+    var reports = await _dbContext.Reports
+        .Where(r => r.ReporterId == userId)
+        .Select(r => new
+        {
+            r.ReportId,
+            r.ReporterId,
+            r.ReportedPersonId,
+            r.ReportTypeId,
+            r.ReportMessage,
+            r.IsHandled,
+            r.CreatedAt
+        })
+        .ToListAsync();
+
+    return Ok(reports);
+}
+```
+Ez a végpont visszaadja az összes jelentést, amelyet a bejelentkezett felhasználó tett. A válasz tartalmazza a jelentés azonosítóját, a bejelentő és jelentett személy azonosítóját, a jelentés típusát, üzenetét, státuszát (kezelve vagy sem) és létrehozásának dátumát.
+
+## `GET /myreport/{id}`
+```csharp
+// Egy adott jelentés lekérése a felhasználó számára
+[HttpGet("myreport/{id}")]
+public async Task<IActionResult> GetReport(int id, [FromQuery] string userId)
+{
+    if (string.IsNullOrEmpty(userId))
+    {
+        return BadRequest("User ID is required.");
+    }
+
+    var report = await _dbContext.Reports
+        .Where(r => r.ReporterId == userId)
+        .Where(r => r.ReportId == id)
+        .Select(r => new
+        {
+            r.ReportId,
+            r.ReporterId,
+            r.ReportedPersonId,
+            r.ReportTypeId,
+            r.ReportMessage,
+            r.IsHandled,
+            r.CreatedAt
+        })
+        .FirstOrDefaultAsync();
+
+    return report == null ? NotFound("Report not found.") : Ok(report);
+}
+```
+Ez a végpont egy adott jelentés adatait adja vissza a felhasználó számára az `id` és a `userId` alapján. Ha a jelentés nem található, 404-es válasz kerül visszaadásra.
+
+## `POST /createReport`
+```csharp
+// Új jelentés létrehozása
+[HttpPost("createReport")]
+public async Task<IActionResult> CreateReport([FromBody] ReportDTO reportDto)
+{
+    // A bejelentkezett felhasználó azonosítójának lekérése (jelentő)
+    var reporterId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    if (string.IsNullOrEmpty(reporterId))
+    {
+        return Unauthorized("User is not authenticated.");
+    }
+
+    // Új jelentés létrehozása
+    var newReport = new Reports
+    {
+        ReporterId = reporterId,
+        ReportedPersonId = reportDto.ReportedPersonId,
+        ReportTypeId = reportDto.ReportTypeId,
+        ReportMessage = reportDto.ReportMessage,
+        CreatedAt = DateTime.Now,
+        IsHandled = false
+    };
+
+    // Jelentés hozzáadása és mentése
+    _dbContext.Reports.Add(newReport);
+    await _dbContext.SaveChangesAsync();
+
+    return Ok(new { Message = "Report created successfully", ReportId = newReport.ReportId });
+}
+```
+Ez a végpont új jelentést hoz létre a bejelentkezett felhasználó számára. Ha a felhasználó nincs bejelentkezve, 401-es választ ad vissza. Az új jelentés tartalmazza a jelentett személy azonosítóját, a jelentés típusát, üzenetét, létrehozásának dátumát, valamint hogy még nem lett kezelve.

@@ -1,0 +1,76 @@
+# Könyv Végpontok
+
+## `GET /books`
+```csharp
+[HttpGet("books")]
+public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooks()
+{
+    var books = await _dbContext.Books
+        .Include(c => c.Comments)
+        .Include(r => r.ReaderRatings)
+        .Include(cr => cr.CriticRatings)
+        .Select(b => new BookDTO
+        {
+            Id = b.BookId,
+            BookName = b.BookName,
+            GenreId = b.GenreId,
+            CategoryId = b.CategoryId,
+            BookDescription = b.BookDescription,
+            Comments = b.Comments.Select(c => new CommentDTO { CommentMessage = c.CommentMessage }).ToList(),
+            ReaderRatings = b.ReaderRatings.Select(r => new ReaderRatingDTO { RatingValue = r.RatingValue }).ToList(),
+            CriticRatings = b.CriticRatings.Select(cr => new CriticRatingDTO { RatingValue = cr.RatingValue }).ToList(),
+            AverageRating = b.ReaderRatings.Any() ? b.ReaderRatings.Average(r => r.RatingValue) : 0,
+            AuthorId = b.AuthorId
+        })
+        .ToListAsync();
+
+    return Ok(books);
+}
+```
+Ez a végpont visszaadja az összes könyvet a rendszerben, a hozzájuk tartozó kommentekkel, olvasói és kritikai értékelésekkel együtt.
+
+## `GET /book/{id}`
+```csharp
+[HttpGet("book/{id}")]
+public async Task<ActionResult<BookDTO>> GetBook(int id)
+{
+    var book = await _dbContext.Books
+        .Include(c => c.Comments)
+        .Include(r => r.ReaderRatings)
+        .Include(cr => cr.CriticRatings)
+        .Where(b => b.BookId == id)
+        .Select(b => new BookDTO
+        {
+            Id = b.BookId,
+            BookName = b.BookName,
+            GenreId = b.GenreId,
+            CategoryId = b.CategoryId,
+            BookDescription = b.BookDescription,
+            Comments = b.Comments.Select(c => new CommentDTO { CommentMessage = c.CommentMessage }).ToList(),
+            ReaderRatings = b.ReaderRatings.Select(r => new ReaderRatingDTO { RatingValue = r.RatingValue }).ToList(),
+            CriticRatings = b.CriticRatings.Select(cr => new CriticRatingDTO { RatingValue = cr.RatingValue }).ToList(),
+            AverageRating = b.ReaderRatings.Any() ? b.ReaderRatings.Average(r => r.RatingValue) : 0,
+            AuthorId = b.AuthorId
+        })
+        .FirstOrDefaultAsync();
+
+    if (book == null)
+    {
+        return NotFound();
+    }
+
+    return Ok(book);
+}
+```
+Ez a végpont egy adott könyvet ad vissza az ID alapján, beleértve a hozzá tartozó kommenteket, olvasói és kritikai értékeléseket.
+
+## `GET /book/count`
+```csharp
+[HttpGet("book/count")]
+public async Task<ActionResult<int>> GetBookCount()
+{
+    var count = await _dbContext.Books.CountAsync();
+    return Ok(count);
+}
+```
+Ez a végpont visszaadja az összes könyv számát a rendszerben.

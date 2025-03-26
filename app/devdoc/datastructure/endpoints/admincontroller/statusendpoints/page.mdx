@@ -1,0 +1,66 @@
+# Állapot Változási Végpontok
+
+## `PUT /muteStatusChange`
+```csharp
+[HttpPut("muteStatusChange")]
+public async Task<ActionResult> ChangeMuteStatus(string userId)
+{
+    var user = await _userManager.FindByIdAsync(userId);
+    if (user == null)
+    {
+        return NotFound("Felhasználó nem található");
+    }
+    if (user.IsMuted)
+    {
+        user.IsMuted = false;
+    }
+    else
+    {
+        user.IsMuted = true;
+    }
+
+    var result = await _userManager.UpdateAsync(user);
+    if (result.Succeeded)
+    {
+        return Ok("A néma státusz megváltoztatva");
+    }
+    else
+    {
+        return BadRequest("Hiba történt");
+    }
+}
+```
+Ez a végpont módosítja egy felhasználó néma (mute) státuszát. Ha a felhasználó már néma, akkor eltávolítja a néma státuszt, ellenkező esetben engedélyezi azt. Ha a frissítés sikeres, akkor visszaadja a "A néma státusz megváltoztatva" üzenetet, egyébként hibaüzenetet küld.
+
+## `PUT /banStatusChanged`
+```csharp
+[HttpPut("banStatusChanged")]
+public async Task<ActionResult> ChangeBanStatus(string userId)
+{
+    var user = await _userManager.FindByIdAsync(userId);
+    if (user == null)
+    {
+        return NotFound("Felhasználó nem található");
+    }
+    if (user.IsBanned)
+    {
+        user.IsBanned = false;
+    }
+    else
+    {
+        user.IsBanned = true;
+    }
+
+    var result = await _userManager.UpdateAsync(user);
+
+    if (result.Succeeded)
+    {
+        return Ok("A bannolás státusza megváltoztatva");
+    }
+    else
+    {
+        return BadRequest("Hiba történt");
+    }
+}
+```
+Ez a végpont módosítja egy felhasználó bannolásának (tiltás) státuszát. Ha a felhasználó már bannolt, akkor eltávolítja a bannolást, ellenkező esetben alkalmazza azt. Ha a frissítés sikeres, akkor visszaadja a "A bannolás státusza megváltoztatva" üzenetet, egyébként hibaüzenetet küld.

@@ -1,0 +1,153 @@
+# Könyv Kezelés Végpontok
+
+## `POST /publish`
+```csharp
+[HttpPost("publish")]
+public async Task<IActionResult> PublishBook([FromBody] PublishBookDTO bookDto)
+{
+    if (bookDto == null || string.IsNullOrEmpty(bookDto.BookName) || bookDto.GenreId <= 0 || bookDto.CategoryId <= 0)
+    {
+        return BadRequest(new { message = "Hiányos vagy érvénytelen adatokat küldtél." });
+    }
+
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    if (string.IsNullOrEmpty(userId))
+    {
+        return Unauthorized(new { message = "Nem található bejelentkezett felhasználó. A token érvénytelen vagy hiányzik." });
+    }
+
+    try
+    {
+        var book = new Books
+        {
+            BookName = bookDto.BookName,
+            GenreId = bookDto.GenreId,
+            CategoryId = bookDto.CategoryId,
+            BookDescription = bookDto.BookDescription,
+            AuthorId = userId, // JWT-ből vesszük az AuthorId-t
+        };
+
+        _dbContext.Books.Add(book);
+        await _dbContext.SaveChangesAsync();
+
+        int publishedBookCount = await _dbContext.Books.CountAsync(b => b.AuthorId == userId);
+
+        await GrantAchievementIfEligible(userId, publishedBookCount);
+
+        return Ok(new { message = "A könyv sikeresen publikálva.", bookId = book.BookId });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { message = "Belső szerverhiba történt a könyv mentése során.", error = ex.Message });
+    }
+}
+```
+Ez a végpont egy új könyvet publikál. A felhasználó által megadott adatokat validálja, és ha azok helyesek, a könyvet rögzíti az adatbázisban. Ha a könyv sikeresen elmentésre került, visszaadja a könyv azonosítóját.
+
+## `PUT /modify/{bookId}`
+```csharp
+[HttpPut("modify/{bookId}")]
+public async Task<IActionResult> ModifyBook(int bookId, [FromBody] ModifyBookDTO bookDto)
+{
+    if (bookDto == null || string.IsNullOrEmpty(bookDto.BookName) || bookDto.GenreId <= 0 || bookDto.CategoryId <= 0)
+    {
+        return BadRequest(new { message = "Hiányos vagy érvénytelen adatokat küldtél." });
+    }
+
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    if (string.IsNullOrEmpty(userId))
+    {
+        return Unauthorized(new { message = "Nem található bejelentkezett felhasználó. A token érvénytelen vagy hiányzik." });
+    }
+
+    try
+    {
+        var book = await _dbContext.Books
+            .FirstOrDefaultAsync(b => b.BookId == bookId && b.AuthorId == userId);
+
+        if (book == null)
+        {
+            return NotFound(new { message = "A könyvet nem találjuk vagy nem jogosult a módosításra." });
+        }
+
+        book.BookName = bookDto.BookName;
+        book.GenreId = bookDto.GenreId;
+        book.CategoryId = bookDto.CategoryId;
+        book.BookDescription = bookDto.BookDescription;
+
+        _dbContext.Books.Update(book);
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { message = "A könyv sikeresen módosítva.", bookId = book.BookId });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { message = "Belső szerverhiba történt a könyv módosítása során.", error = ex.Message });
+    }
+}
+```
+Ez a végpont egy meglévő könyvet módosít. A felhasználónak jogosultsággal kell rendelkeznie a könyv módosításához. Ha a könyvet nem találja vagy a felhasználó nem jogosult a módosításra, hibaüzenetet ad vissza.
+
+## `DELETE /delete/{bookId}`
+```csharp
+[HttpDelete("delete/{bookId}")]
+public async Task<IActionResult> DeleteBook(int bookId)
+{
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    if (string.IsNullOrEmpty(userId))
+    {
+        return Unauthorized(new { message = "Nem található bejelentkezett felhasználó. A token érvénytelen vagy hiányzik." });
+    }
+
+    try
+    {
+        var book = await _dbContext.Books
+            .FirstOrDefaultAsync(b => b.BookId == bookId && b.AuthorId == userId);
+
+        if (book == null)
+        {
+            return NotFound(new { message = "A könyvet nem találjuk vagy nem jogosult a törlésére." });
+        }
+
+        var chapters = await _dbContext.Chapters
+            .Where(ch => ch.BookId == bookId)
+            .ToListAsync();
+        _dbContext.Chapters.RemoveRange(chapters);
+
+        var comments = await _dbContext.Comments
+            .Where(c => c.BookId == bookId)
+            .ToListAsync();
+        _dbContext.Comments.RemoveRange(comments);
+
+        var readerRatings = await _dbContext.ReaderRatings
+            .Where(r => r.BookId == bookId)
+            .ToListAsync();
+        _dbContext.ReaderRatings.RemoveRange(readerRatings);
+
+        var criticRatings = await _dbContext.CriticRatings
+            .Where(r => r.BookId == bookId)
+            .ToListAsync();
+        _dbContext.CriticRatings.RemoveRange(criticRatings);
+
+        var favoritesToRemove = await _dbContext.Favourites
+            .Where(fav => fav.BookId == bookId)
+            .ToListAsync();
+        _dbContext.Favourites.RemoveRange(favoritesToRemove);
+
+        await _dbContext.SaveChangesAsync();
+
+        _dbContext.Books.Remove(book);
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { message = "A könyv és annak kapcsolódó adatainak törlése sikeresen megtörtént." });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { message = "Belső szerverhiba történt a könyv törlése során.", error = ex.Message });
+    }
+}
+```
+Ez a végpont egy könyvet töröl a rendszerből. A könyv törlésével együtt az összes kapcsolódó adat is törlésre kerül, mint például fejezetek, kommentek és értékelések. A törléshez a felhasználónak jogosultsággal kell rendelkeznie a könyv törléséhez.
