@@ -1,0 +1,71 @@
+# Book Service API Integráció
+
+Ez a modul a könyvekkel kapcsolatos műveletek kezelésére szolgáló API-kat tartalmazza. A backend rendszerben történő könyvkezeléshez szükséges műveletek mindegyikét tartalmazza.
+
+## **Funkciók**:
+
+### **1. Könyv hozzáadása (addBook)**:
+- **Leírás**: Új könyvet ad hozzá az adatbázishoz. A könyv adatai között szerepelhet a cím, szerző, kiadó és egyéb metaadatok.
+- **Paraméterek**:
+  - `title` (string): A könyv címe.
+  - `author` (string): A könyv szerzője.
+  - `publisher` (string): A könyv kiadója.
+  - `year` (number): A könyv kiadási éve.
+  - `genre` (string): A könyv műfaja.
+- **Működés**:
+  - A POST kérést a `/api/Books/add` végpontra küldi.
+  - A válaszban a könyv adatainak visszaadása történik, amelyet az alkalmazás további felhasználásra tárol.
+- **Visszatérés**: A hozzáadott könyv adatainak visszaadása.
+- **Hibakezelés**: Hibák kezelésére a válasz státusza és az esetleges JSON válaszok alapján.
+
+### **2. Könyv adatainak frissítése (updateBook)**:
+- **Leírás**: Frissíti a könyv adatait az adatbázisban.
+- **Paraméterek**:
+  - `id` (string): A könyv azonosítója.
+  - `title` (string): A frissített könyv címe.
+  - `author` (string): A frissített könyv szerzője.
+  - `publisher` (string): A frissített könyv kiadója.
+  - `year` (number): A frissített könyv kiadási éve.
+  - `genre` (string): A frissített könyv műfaja.
+- **Működés**:
+  - A PUT kérést a `/api/Books/update` végpontra küldi.
+  - A válaszban a frissített könyv adatainak visszaadása történik.
+- **Visszatérés**: A frissített könyv adatainak visszaadása.
+- **Hibakezelés**: Hibák kezelése a válasz státusza és az esetleges JSON válasz alapján.
+
+### **3. Könyv törlése (deleteBook)**:
+- **Leírás**: Törli a megadott könyvet az adatbázisból.
+- **Paraméterek**:
+  - `id` (string): A könyv azonosítója.
+- **Működés**:
+  - A DELETE kérést a `/api/Books/delete` végpontra küldi.
+  - A válaszban a törlés sikerességéről kapunk visszajelzést.
+- **Visszatérés**: A törlés sikeressége (pl. "A könyv törölve lett").
+- **Hibakezelés**: Hibák kezelése a válasz státusza és az esetleges JSON válasz alapján.
+
+### **4. Könyv keresése (searchBooks)**:
+- **Leírás**: A könyvek keresését végzi el az adatbázisban a megadott kulcsszó alapján.
+- **Paraméterek**:
+  - `query` (string): A keresési kifejezés (pl. könyv címe vagy szerzője).
+- **Működés**:
+  - A GET kérést a `/api/Books/search` végpontra küldi.
+  - A válaszban a keresési kifejezésnek megfelelő könyvek adatait tartalmazza.
+- **Visszatérés**: A találatok listája JSON formátumban.
+- **Hibakezelés**: Hibák kezelése a válasz státusza és az esetleges JSON válasz alapján.
+
+### **5. Könyv adatainak lekérése (getBookDetails)**:
+- **Leírás**: Egy adott könyv részletes adatainak lekérése az adatbázisból.
+- **Paraméterek**:
+  - `id` (string): A könyv azonosítója.
+- **Működés**:
+  - A GET kérést a `/api/Books/details` végpontra küldi.
+  - A válaszban a könyv részletes adatai JSON formátumban.
+- **Visszatérés**: A könyv részletes adatai JSON formátumban.
+- **Hibakezelés**: Hibák kezelése a válasz státusza és az esetleges JSON válasz alapján.
+
+## **Hibakezelés**:
+A hibák minden API hívás során naplózva vannak a `console.error` segítségével. Az alkalmazás a hibaüzeneteket az API válaszok és a válaszok JSON adatainak figyelembevételével jeleníti meg. A leggyakoribb hibák:
+- **Könyv nem található**: Ha a keresett könyv nem található az adatbázisban.
+- **Sikertelen törlés**: Ha a törölt könyvet nem sikerült eltávolítani.
+- **Hibás könyvadatok**: Ha a frissítés vagy hozzáadás során a könyvadatok hibásak.
+- **Keresés hiba**: Ha a keresési kifejezés nem hozott találatokat.

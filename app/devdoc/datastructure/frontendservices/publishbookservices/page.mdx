@@ -1,0 +1,25 @@
+# Műfajok és Kategóriák API Integráció
+
+Ez a modul lehetővé teszi a műfajok és kategóriák lekérését a backend API-ból. A modul az adatok sikeres lekérése után visszaadja a válaszokat, vagy hibát dob, ha a lekérés nem sikerült.
+
+## **Funkciók**:
+
+### **1. Műfajok lekérése (getGenres)**:
+- **Leírás**: A műfajok lekérése a backend API-ból, amelyek listáját visszaadja.
+- **Működés**:
+  - A `fetch` függvény segítségével elküldi a GET kérést az `/api/Metadata/genres` végpontra.
+  - A válasz JSON formátumban tartalmazza a műfajokat.
+- **Visszatérés**: A műfajok adatainak JSON formátumban való visszaadása.
+- **Hibakezelés**: Ha a lekérés során hiba lép fel, az alkalmazás hibát dob, amely tartalmazza a "Hiba a műfajok lekérése során!" üzenetet.
+
+### **2. Kategóriák lekérése (getCategories)**:
+- **Leírás**: A kategóriák lekérése a backend API-ból, amelyek listáját visszaadja.
+- **Működés**:
+  - A `fetch` függvény segítségével elküldi a GET kérést az `/api/Metadata/categories` végpontra.
+  - A válasz JSON formátumban tartalmazza a kategóriákat.
+- **Visszatérés**: A kategóriák adatainak JSON formátumban való visszaadása.
+- **Hibakezelés**: Ha a lekérés során hiba lép fel, az alkalmazás hibát dob, amely tartalmazza a "Hiba a kategóriák lekérése során!" üzenetet.
+
+## **Hibakezelés**:
+A hibák minden API hívás során naplózva vannak a `console.error` segítségével. A leggyakoribb hibák:
+- **Hálózati hiba**: Ha a fetch kérés nem sikerül, a rendszer hibaüzenetet jelenít meg a hibával kapcsolatban.

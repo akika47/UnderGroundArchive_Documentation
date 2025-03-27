@@ -3,5 +3,7 @@ export default {
     database: "Adatbázis",
     endpoints: "Végpontok",
     uniquemethods: "Egyedi metódusok",
-    components: "Komponensek"
+    components: "Komponensek",
+    frontendservices: "Frontend Szolgáltatások",
+    backendservices: "Backend Szolgáltatások",
   };

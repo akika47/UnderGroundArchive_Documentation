@@ -1,0 +1,33 @@
+# Kérelmek API Integráció
+
+Ez a modul lehetővé teszi a felhasználók számára, hogy lekérdezzék saját kérelmeiket, valamint új kérelmeket küldjenek a backend API-n keresztül. A rendszer biztosítja a megfelelő válaszok kezelését és a hibák megfelelő naplózását.
+
+## **Funkciók**:
+
+### **1. Kérelmek Lekérése (getMyRequests)**:
+- **Leírás**: A felhasználó saját kérelmeinek lekérése a backend API-ról.
+- **Paraméterek**:
+  - `token` (string): A felhasználó hitelesítő tokene (JWT), amelyet az autentikációhoz használunk.
+- **Működés**:
+  - A `fetch` függvény segítségével a rendszer GET kérést küld a `/User/myrequests` végpontra.
+  - A kérés tartalmazza az `Authorization` fejlécet a tokennel, amely az autentikációt végzi.
+- **Visszatérés**: A válasz JSON formátumban tartalmazza a felhasználó kérelmeit.
+- **Hibakezelés**: Ha a válasz nem megfelelő vagy hiba történik a kérelmek lekérése során, a rendszer hibát dob, amely tartalmazza a `Hiba történt a kérelmek betöltésekor.` üzenetet.
+
+### **2. Új Kérelem Létrehozása (newRequest)**:
+- **Leírás**: Új kérelem küldése a backend API-n keresztül.
+- **Paraméterek**:
+  - `requestMessage` (string): A kérelem szövege, amelyet a felhasználó küld.
+  - `requestType` (number): A kérelem típusa, amely meghatározza, hogy milyen típusú kérelemről van szó.
+  - `token` (string): A felhasználó hitelesítő tokene (JWT), amely az autentikációt végzi.
+- **Működés**:
+  - A rendszer POST kérést küld a `/User/createRequest` végpontra a `requestMessage` és `requestType` adatokat tartalmazó JSON testtel.
+  - A kérés tartalmazza az `Authorization` fejlécet a tokennel.
+  - A válasz státusza és adatainak megfelelően a rendszer kezelni fogja az esetleges hibákat.
+- **Visszatérés**: A válasz `message` mezőjét tartalmazza, amely visszaadja a sikeres kérés eredményét.
+- **Hibakezelés**: Ha a válasz nem megfelelő vagy hiba történik a kérelem létrehozása során, a rendszer hibát dob, amely tartalmazza a `Hiba történt: {response.statusText}` üzenetet, és jelzi, ha a token érvénytelen vagy lejárt.
+
+## **Hibakezelés**:
+A hibák minden API hívás során naplózva vannak a `console.error` segítségével. A leggyakoribb hibák:
+- **Hiba történt a kérelmek betöltésekor**: Ha a kérelmek lekérése nem sikerült.
+- **Nincs jogosultság. Lehet, hogy a token érvénytelen vagy lejárt.**: Ha a hitelesítő token lejárt vagy érvénytelen.

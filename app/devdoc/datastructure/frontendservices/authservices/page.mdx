@@ -1,0 +1,55 @@
+# Auth API Integráció
+
+Ez a modul a felhasználói bejelentkezés, regisztráció, kijelentkezés és felhasználói adatok lekéréséhez szükséges API-kat tartalmazza. A modult a backend rendszerhez történő kommunikációhoz használjuk.
+
+## **Funkciók**:
+
+### **1. Bejelentkezés (loginUser)**:
+- **Leírás**: A felhasználó bejelentkezését kezeli, és JWT tokent ad vissza a sikeres bejelentkezés után.
+- **Paraméterek**:
+  - `login` (string): A felhasználó bejelentkezési azonosítója (pl. felhasználónév vagy email).
+  - `password` (string): A felhasználó jelszava.
+- **Működés**:
+  - A komponens POST kérést küld a backend `/api/Account/login` végpontjára.
+  - A válaszban lévő JWT token eltárolásra kerül a `localStorage`-ban.
+  - Hiba esetén az alkalmazás hibaüzenetet jelenít meg (pl. "Hibás felhasználónév vagy jelszó!").
+- **Visszatérés**: A JWT token, ha sikeres a bejelentkezés.
+- **Hibakezelés**: Hibák kezelése a válasz státusza és az esetleges JSON válasz alapján.
+
+### **2. Felhasználói adatok lekérése (fetchUserData)**:
+- **Leírás**: A felhasználói adatok lekérése a backend API-ból a bejelentkezett felhasználó számára.
+- **Paraméterek**:
+  - `token` (string): A JWT token, amely a felhasználó autentikációját biztosítja.
+- **Működés**:
+  - A GET kérést az `/api/User/me` végpontra küldi.
+  - A válasz JSON formátumban tartalmazza a felhasználó adatait.
+- **Visszatérés**: A felhasználó adatainak JSON formátumban való visszaadása.
+- **Hibakezelés**: A hiba esetén hibaüzenetet generál (pl. "Nem sikerült lekérni a felhasználói adatokat.").
+
+### **3. Kijelentkezés (logoutUser)**:
+- **Leírás**: A felhasználó kijelentkezését kezeli, törli a tárolt JWT tokent és egyéb felhasználói adatokat.
+- **Működés**:
+  - A `localStorage`-ból eltávolítja a JWT tokent és a téma beállításokat.
+- **Visszatérés**: Nincs visszatérési érték.
+
+### **4. Regisztráció (registerUser)**:
+- **Leírás**: Új felhasználó regisztrációját végzi el, validálja a válaszokat és kezeli a hibaüzeneteket.
+- **Paraméterek**:
+  - `name` (string): A felhasználó neve.
+  - `email` (string): A felhasználó email címe.
+  - `password` (string): A felhasználó jelszava.
+  - `birthDate` (string): A felhasználó születési dátuma.
+  - `country` (string): A felhasználó országának neve.
+  - `phoneNumber` (string): A felhasználó telefonszáma.
+- **Működés**:
+  - A POST kérést az `/api/Account/register` végpontra küldi.
+  - A backend hibákat küldhet válaszként, például már regisztrált email vagy felhasználónév esetén.
+- **Visszatérés**: A regisztráció sikerességét visszaadó üzenet.
+- **Hibakezelés**: A hibák kezelése részletesen, például ha az email már regisztrálva van, vagy a regisztráció nem sikerült.
+
+## **Hibakezelés**:
+A hibák minden API hívás során naplózva vannak a `console.error` segítségével. Az alkalmazás a hibaüzeneteket az API válaszok és a válaszok JSON adatainak figyelembevételével jeleníti meg. A leggyakoribb hibák:
+- **Hibás felhasználónév vagy jelszó**: Ha a bejelentkezés során nem található megfelelő felhasználó.
+- **Token nem található**: Ha a válaszban nincs JWT token.
+- **Email már regisztrálva van**: Ha a regisztrációs API válasza szerint az adott email cím már létezik.
+- **Felhasználónév már regisztrálva van**: Ha a regisztrációs API válasza szerint az adott felhasználónév már létezik.

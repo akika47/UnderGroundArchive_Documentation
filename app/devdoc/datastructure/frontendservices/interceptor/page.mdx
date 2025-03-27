@@ -1,0 +1,27 @@
+# Fetch Interceptor API Integráció
+
+Ez a modul egy interceptor funkciót valósít meg, amely minden API hívás előtt módosítja a kérést, és biztosítja a megfelelő autentikációs tokent. Az interceptor kezeli a válaszokat, beleértve az autentikációs hibákat is.
+
+## **Funkciók**:
+
+### **1. Kérés előtti módosítás (fetchInterceptor)**:
+- **Leírás**: Módosítja a kérést az autentikációs token hozzáadásával a fejlécekhez, majd végrehajtja a fetch kérést. A válaszokat is kezeli, beleértve az autentikációs hibákat (pl. 401-es státuszkód).
+- **Paraméterek**:
+  - `input` (RequestInfo): Az API kérés URL-je vagy Request objektuma.
+  - `init` (RequestInit, opcionális): A fetch kéréshez tartozó beállítások, például HTTP metódus, fejlécek stb.
+- **Működés**:
+  - Az interceptor először hozzáadja az `Authorization` fejléchez a helyi tárolóból lekért JWT tokent, ha az elérhető.
+  - Az `Authorization` fejléchez tartozó érték `Bearer {token}` formátumban kerül hozzáadásra.
+  - A kéréshez a `Content-Type` fejlécre is beállítja a `application/json` értéket.
+  - A módosított kérés végrehajtása után, ha a válasz nem sikeres (nem 2xx státuszkód), és ha a válasz státusza 401 (unauthorized), a rendszer hibaüzenetet jelenít meg, és figyelmeztet a bejelentkezés szükségességére.
+- **Visszatérés**: A fetch kérés válasza.
+- **Hibakezelés**: Ha hiba történik a kérés végrehajtása során, az interceptor hibát dob, és naplózza azt a `console.error` segítségével.
+
+## **Hibakezelés**:
+A hibák minden API hívás során naplózva vannak a `console.error` segítségével. A leggyakoribb hibák:
+- **401 Unauthorized**: Ha a válasz státusza 401-es, az alkalmazás figyelmeztetést küld, hogy a felhasználónak be kell jelentkeznie.
+- **Fetch hiba**: Ha a fetch kérés során hiba lép fel, például hálózati probléma miatt.
+
+## **Fontos megjegyzések**:
+- A token tárolása a `localStorage`-ban történik, és az interceptor minden egyes kérésnél automatikusan hozzáadja azt az Authorization fejléchez.
+- Ha a token nem található, akkor az `Authorization` fejléc üresen kerül hozzáadásra a kéréshez.

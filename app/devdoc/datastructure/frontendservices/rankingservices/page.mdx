@@ -1,0 +1,32 @@
+# Pontok Frissítése és Felhasználói Jelentés API Integráció
+
+Ez a modul lehetővé teszi a felhasználók pontjainak frissítését és a felhasználók jelentését a backend API-n keresztül. A rendszer biztosítja a megfelelő válaszok kezelését és hibaüzeneteket jelenít meg, ha valami hiba történik.
+
+## **Funkciók**:
+
+### **1. Pontok Frissítése (updatePoints)**:
+- **Leírás**: A felhasználó pontjainak frissítése a backend API-n keresztül.
+- **Paraméterek**:
+  - `userId` (string): A felhasználó egyedi azonosítója.
+  - `points` (number): Az új pontszám, amit frissíteni kell.
+  - `role` (string): A felhasználó szerepe (pl. admin, felhasználó stb.).
+- **Működés**:
+  - A `fetch` függvény segítségével a rendszer PATCH kérést küld a `/api/Ranking/updatePoints` végpontra, ahol a felhasználó pontjait frissíti.
+  - A kérés tartalmazza a `userId`, `points` és `role` adatokat a body-ban.
+- **Visszatérés**: A válasz szövege, ha a pontfrissítés sikeres, vagy `null`, ha nincs válasz.
+- **Hibakezelés**: Ha a válasz nem megfelelő, a rendszer hibát dob, amely tartalmazza a `Hiba a pontok frissítése során` üzenetet és az esetleges hiba szöveget.
+
+### **2. Felhasználó Jelentése (reportUser)**:
+- **Leírás**: A felhasználó jelentése a backend API-n keresztül.
+- **Paraméterek**:
+  - `userId` (string): A jelentett felhasználó egyedi azonosítója.
+- **Működés**:
+  - A `fetch` függvény segítségével a rendszer PATCH kérést küld a `/api/Ranking/reportUser` végpontra, amely jelzi a felhasználót.
+  - A kérés body-jában szerepel a `userId`.
+- **Visszatérés**: A válasz JSON formátumban tartalmazza a jelentés eredményét.
+- **Hibakezelés**: Ha a jelentés nem sikerült, a rendszer hibát dob, amely tartalmazza a `Hiba a felhasználó büntetése során!` üzenetet.
+
+## **Hibakezelés**:
+A hibák minden API hívás során naplózva vannak a `console.error` segítségével. A leggyakoribb hibák:
+- **Hiba a pontok frissítése során**: Ha a válasz nem megfelelő vagy hiba történik a pontok frissítése során.
+- **Hiba a felhasználó büntetése során**: Ha a felhasználó jelentése nem sikerül.

@@ -1,0 +1,22 @@
+# Téma Frissítés API Integráció
+
+Ez a modul lehetővé teszi a felhasználó számára, hogy frissítse a felhasználói felület témáját az alkalmazásban a backend API segítségével. A frissítés során a rendszer az autentikációhoz szükséges JWT tokent is használ.
+
+## **Funkciók**:
+
+### **1. Téma Frissítése (updateTheme)**:
+- **Leírás**: A felhasználói felület témájának frissítése. A felhasználó által kiválasztott új téma küldése a backend API számára.
+- **Paraméterek**:
+  - `newTheme` (string): Az új téma neve, amelyet a felhasználó választott. A téma színeit és egyéb vizuális elemeit beállítja az alkalmazásban.
+- **Működés**:
+  - A rendszer PUT kérést küld az `/updateTheme` végpontra a kiválasztott téma nevét tartalmazó JSON testtel.
+  - A kérés tartalmazza az `Authorization` fejlécet a JWT tokennel, amely a felhasználó hitelesítésére szolgál.
+- **Visszatérés**: A válasz JSON formátumban tartalmazza a frissített téma adatait vagy egy üzenetet a sikeres frissítésről.
+- **Hibakezelés**:
+  - Ha a válasz nem megfelelő (nem 200-as státuszkód), akkor a hibaüzenetet a rendszer naplózza és egy `Nem sikerült frissíteni a témát` hibaüzenettel dobja el a hibát.
+  - Ha bármilyen egyéb hiba lép fel a kérés során, a rendszer naplózza a hibát és egy általános hibát dob: `Hiba történt`.
+
+## **Hibakezelés**:
+A hibák minden API hívás során naplózva vannak a `console.error` segítségével. A leggyakoribb hibák:
+- **Nem sikerült frissíteni a témát**: Ha a téma frissítése nem sikerült.
+- **Hiba történt**: Ha a kérés feldolgozása során bármilyen egyéb hiba történik.

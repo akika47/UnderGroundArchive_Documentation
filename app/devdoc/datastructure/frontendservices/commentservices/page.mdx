@@ -1,0 +1,57 @@
+# Komment Szolgáltatás API Integráció
+
+Ez a modul a könyvekhez tartozó kommentek kezelésére szolgáló API-kat tartalmazza. A felhasználók képesek kommenteket létrehozni, lekérni és törölni egy adott könyv kapcsán.
+
+## **Funkciók**:
+
+### **1. Kommentek lekérése (getComments)**:
+- **Leírás**: A kommentek lekérése a megadott könyv ID-ja alapján. A válasz tartalmazza a könyvhöz tartozó összes kommentet.
+- **Paraméterek**:
+  - `bookId` (number): A könyv azonosítója, amelyhez a kommenteket szeretnénk lekérni.
+  - `token` (string): A JWT token, amely a felhasználó autentikációját biztosítja.
+- **Működés**:
+  - A GET kérést a `/api/User/comments/${bookId}` végpontra küldi.
+  - A válasz JSON formátumban tartalmazza a könyvhöz tartozó kommenteket.
+- **Visszatérés**: A kommentek JSON formátumban.
+- **Hibakezelés**: Hibák kezelése a válasz státusza és az esetleges JSON válaszok alapján.
+
+### **2. Felhasználónév lekérése (getUsername)**:
+- **Leírás**: A felhasználónevet lekéri a megadott felhasználói ID alapján.
+- **Paraméterek**:
+  - `userId` (string): A felhasználó azonosítója, akinek a nevét szeretnénk lekérni.
+- **Működés**:
+  - A GET kérést a `/api/User/user/${userId}` végpontra küldi.
+  - A válasz JSON formátumban tartalmazza a felhasználó nevét.
+- **Visszatérés**: A felhasználónevet tartalmazó JSON válasz.
+- **Hibakezelés**: Hibák kezelése a válasz státusza és az esetleges JSON válaszok alapján.
+
+### **3. Komment létrehozása (createComment)**:
+- **Leírás**: Új komment létrehozása egy adott könyvhöz. A kommentet a megadott könyv ID-ja, a felhasználó ID-ja és a komment szövege alapján hozza létre.
+- **Paraméterek**:
+  - `bookId` (number): A könyv azonosítója, amelyhez a kommentet hozzá akarjuk adni.
+  - `commentMessage` (string): A komment szövege.
+  - `userId` (string): A felhasználó azonosítója, aki a kommentet írja.
+  - `token` (string): A JWT token, amely a felhasználó autentikációját biztosítja.
+- **Működés**:
+  - A POST kérést a `/api/User/createComment` végpontra küldi.
+  - A kérésben a könyv ID-ját, a komment szövegét és a felhasználó ID-ját JSON formátumban küldi el.
+  - A válaszban megerősítést kapunk a komment létrehozásáról.
+- **Visszatérés**: Nincs visszatérési érték, de sikeres létrehozás esetén a komment létrejön.
+- **Hibakezelés**: Hibák kezelése, például ha nem sikerült a komment létrehozása.
+
+### **4. Komment törlése (deleteComment)**:
+- **Leírás**: Egy komment törlése a megadott komment ID-ja alapján.
+- **Paraméterek**:
+  - `commentId` (number): A törlendő komment azonosítója.
+  - `token` (string): A JWT token, amely a felhasználó autentikációját biztosítja.
+- **Működés**:
+  - A PUT kérést a `/api/User/deleteComment/${commentId}` végpontra küldi.
+  - A válaszban megerősítést kapunk a komment törléséről.
+- **Visszatérés**: Nincs visszatérési érték, de sikeres törlés esetén a komment eltávolításra kerül.
+- **Hibakezelés**: Hibák kezelése, például ha nem sikerült a komment törlése.
+
+## **Hibakezelés**:
+A hibák minden API hívás során naplózva vannak a `console.error` segítségével. Az alkalmazás a hibaüzeneteket az API válaszok és a válaszok JSON adatainak figyelembevételével jeleníti meg. A leggyakoribb hibák:
+- **Komment nem található**: Ha a törölt vagy lekért komment nem található.
+- **Komment létrehozása sikertelen**: Ha a komment hozzáadása nem sikerült.
+- **Komment törlése sikertelen**: Ha a komment törlése nem sikerült.
