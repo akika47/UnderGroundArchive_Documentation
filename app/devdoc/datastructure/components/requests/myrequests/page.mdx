@@ -1,0 +1,18 @@
+# Saját Kérelmeim Komponens
+
+A **`MyRequests`** komponens lehetővé teszi a felhasználók számára, hogy megtekintsék saját kérelmeik állapotát. Az alkalmazás a felhasználóhoz tartozó kérelmeket tölti be, és azokat különböző állapotokban jeleníti meg (pl. jóváhagyva, jóváhagyásra vár). Emellett hibakezelést is biztosít, ha a kérések betöltése közben hiba történik.
+
+## **Funkciók**:
+
+- **Kérelmek betöltése**:
+  - Az alkalmazás a `getMyRequests` szolgáltatást használja, hogy a felhasználóhoz tartozó kérelmeket lekérdezze. Az adatokat az API biztosítja.
+  - A kérelmek betöltésekor a komponens betöltést jelez (`loading` állapot), és ha hiba történik, egy hibaüzenet jelenik meg.
+
+- **Kérelem állapotok**:
+  - A kérelmeket a következő adatmezők alapján jelenítjük meg:
+    - **Kérelem szövege**: A kérelem tartalma.
+    - **Állapot**: A kérelem állapota (jóváhagyásra vár, jóváhagyva).
+    - **Döntés**: A kérelem elfogadott vagy elutasított státusza, ha már döntés született.
+
+- **Hibakezelés**:
+  - Ha a kérelmek betöltése közben hiba történik, az alkalmazás megjeleníti a hibaüzenetet.

@@ -1,0 +1,8 @@
+# Home Komponens
+
+A `Home` komponens egy üdvözlő oldalt jelenít meg, amely véletlenszerű könyveket listáz, és biztosítja, hogy az oldal minden nap frissített könyveket jelenítsen meg a felhasználóknak.
+
+## **Funkciók**:
+- **Random könyvek megjelenítése**: Az alkalmazás a könyvek listáját az `localStorage`-ban tárolja, hogy biztosítva legyen a gyors megjelenítés és a napi frissítés.
+- **Frissítés napi szinten**: Ha a könyveket már letöltöttük aznap, akkor azokat az `localStorage`-ból olvassa ki. Ha nem, akkor a könyveket újra letölti a szerverről.
+- **Stílus és interakciók**: A könyvek megjelenítése a felhasználónak egy csúszka formájában történik, ahol minden könyv egy `item`-ként van feltüntetve. A csillagok az átlagos értékelés megjelenítésére szolgálnak.

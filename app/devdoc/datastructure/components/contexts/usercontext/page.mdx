@@ -1,0 +1,11 @@
+# Felhasználói Konteksztus Kezelő Komponens
+
+A `UserContext` komponens célja, hogy kezelje a felhasználói adatokat és autentikációt a React alkalmazásban, biztosítva a felhasználói státusz és információk globális elérhetőségét.
+
+## **Funkciók**:
+- **Felhasználói adatok tárolása**: A `user` állapot tárolja a felhasználó adatait, amely tartalmazza a felhasználó azonosítóját, nevét, szerepét, e-mail címét, telefonszámát és más adatokat. Amennyiben nincs bejelentkezett felhasználó, a `guest` érték szerepel.
+- **Token dekódolás**: A felhasználói adatok a JWT token dekódolása során kerülnek kinyerésre. A `jwtDecode` könyvtár segítségével a tokenben található információkat, mint például a felhasználó azonosítóját, nevét, szerepét, stb., kinyerjük és a `setUser` segítségével frissítjük az alkalmazás állapotát.
+- **Autentikáció**: A felhasználói adatok dekódolásakor, ha a token nem érvényes vagy hibás, a felhasználót automatikusan kijelentkeztetjük.
+- **Kijelentkezés**: A `logout` funkció segítségével eltávolítjuk a tokeneket és a felhasználói adatokat a `localStorage`-ból, majd beállítjuk a felhasználói státuszt "guest"-re, és átirányítjuk a felhasználót a kezdőoldalra.
+- **Globális Kontextus használat**: A `UserContext` biztosítja a felhasználói adatok hozzáférését az alkalmazás bármely pontján, hogy azok dinamikusan változhassanak a felhasználó interakciói alapján.
+- **Navigálás**: A `useNavigate` hook segítségével a felhasználó kijelentkezése után átirányítjuk a kezdőoldalra.

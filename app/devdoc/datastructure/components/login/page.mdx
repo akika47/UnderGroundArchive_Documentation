@@ -1,0 +1,13 @@
+# Bejelentkezés Komponens
+
+Ez a `Login` komponens a felhasználói bejelentkezést kezeli, amely magában foglalja a hagyományos bejelentkezést felhasználónév és jelszó segítségével, valamint a Google bejelentkezési lehetőséget. Az autentikációval kapcsolatos információkat a felhasználói kontextusból és a JWT tokenből nyeri, és szükség esetén betöltési animációt is megjelenít.
+
+## **Funkciók**:
+- **Bejelentkezés kezelése**: A felhasználók bejelentkezhetnek felhasználónév és jelszó megadásával, vagy a Google fiókjukkal.
+- **JWT token ellenőrzés**: A komponens ellenőrzi, hogy a felhasználó érvényes JWT tokennel rendelkezik-e, és automatikusan bejelentkezteti őt, ha a token még érvényes.
+- **Felhasználói adatlekérés**: Bejelentkezés után lekéri a felhasználó adatokat a backendről.
+- **Téma beállítása**: Ha a felhasználónak van mentett témája, az beállítódik a felhasználói felület számára.
+- **Hibakezelés**: A hibák megjelenítése toast üzenetekkel.
+- **Google Login**: Lehetőség a Google fiókkal történő bejelentkezésre is.
+
+A `Login` komponens biztosítja a felhasználói bejelentkezést a hagyományos bejelentkezési módon, és lehetőséget ad a Google fiókkal történő bejelentkezésre is. Emellett ellenőrzi a JWT tokent, és ha az érvényes, automatikusan bejelentkezteti a felhasználót, anélkül, hogy újból meg kellene adnia a bejelentkezési adatokat.

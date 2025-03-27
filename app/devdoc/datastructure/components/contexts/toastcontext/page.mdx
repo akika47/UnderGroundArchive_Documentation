@@ -1,0 +1,14 @@
+# Toast Értesítés Kontextus Komponens
+
+A ToastContext komponens egy egyszerű és hatékony értesítési rendszert biztosít React alkalmazásokhoz, amely lehetővé teszi üzenetek megjelenítését a felhasználó számára. A komponens kétféle értesítést támogat: sikeres (success) és hibás (error) üzeneteket.
+
+## **Funkciók**:
+- **Dinamikus értesítések megjelenítése**: A showToast függvény segítségével bármely komponensből megjeleníthetőek időzített értesítések.
+- **Kétféle üzenet típus**: Az értesítések "success" (siker) és "error" (hiba) kategóriákba sorolhatók, amelyek vizuálisan is megkülönböztethetők.
+- **Automatikus eltűnés**: Az értesítések 3 másodperc után automatikusan eltűnnek a felhasználói felületről.
+- **Manuális bezárás**: Az értesítések bezárhatók a felhasználó által a bezárás gombra kattintva.
+- **Globális hozzáférés**: A useToast hook segítségével az alkalmazás bármely pontján használható az értesítési rendszer.
+- **Kontextus alapú megvalósítás**: A ToastProvider komponens biztosítja az értesítési funkciókat a leszármazott komponensek számára.
+- **TypeScript támogatás**: A komponens típusbiztos megvalósítással rendelkezik, ami segíti a fejlesztést IDE támogatással.
+
+A komponens kiválóan alkalmas felhasználói visszajelzések megjelenítésére, például űrlap elküldésének eredményéről, hálózati hibákról vagy egyéb műveleti visszajelzésekről.

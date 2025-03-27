@@ -1,0 +1,22 @@
+# Regisztráció Komponens
+
+Ez a **`Register`** komponens egy felhasználói regisztrációs űrlapot biztosít. A felhasználó kitöltheti a szükséges adatokat (név, email, jelszó, születési dátum, ország, telefonszám), és regisztrálhatja magát az alkalmazásban. Az űrlap érvényesíti, hogy minden mező ki legyen töltve, és megfelelően kezeli a hibákat és sikeres regisztrációt is.
+
+## **Funkciók**:
+
+- **Űrlap mezők**:
+  - A regisztrációhoz szükséges adatokat kérjük be: név, email, jelszó, születési dátum, ország, és telefonszám.
+  - Minden mező kitöltése kötelező. Ha bármelyik mező üres, a felhasználó hibát kap.
+
+- **Hibakezelés**:
+  - Ha a felhasználó nem tölti ki az összes szükséges mezőt, akkor megjelenik egy hibaüzenet, amely figyelmezteti őt.
+  - A hibás regisztrációk esetén egyéni hibaüzenetet kapunk, és azokat az alkalmazás kezelni tudja.
+
+- **Sikeres regisztráció**:
+  - Ha a regisztráció sikeresen megtörténik, a felhasználó egy "success" típusú toast értesítést kap, és az alkalmazás automatikusan átirányítja a login oldalra (`/login`).
+  
+- **API-hívás**:
+  - A regisztráció a **`registerUser`** funkcióval történik, amely egy API hívást indít a backend felé. Ha sikeres a hívás, az üzenet a felhasználónak megjelenik.
+
+- **Navigáció**:
+  - A regisztráció után a felhasználó automatikusan átirányításra kerül a bejelentkezési oldalra (`/login`).

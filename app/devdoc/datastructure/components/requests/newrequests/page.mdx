@@ -1,0 +1,10 @@
+# Új Kérelem Létrehozása Komponens
+
+A **`NewRequest`** komponens lehetővé teszi a felhasználók számára, hogy új kérelmet hozzanak létre. A kérelem tartalmaz egy üzenetet, amely a kérelmet írja le, és egy típust, amely meghatározza a kérelem típusát (pl. "Szerző" vagy "Kritikus"). A komponens a felhasználó szerepe alapján dinamikusan szűri a rendelkezésre álló lehetőségeket a kérelem típusainál.
+
+## **Funkciók**:
+
+- **Kérelem üzenet**: A felhasználó beírhatja a kérelem szövegét a `textarea` mezőbe.
+- **Kérelem típus**: A kérelem típusát egy legördülő listában lehet kiválasztani. Az elérhető lehetőségek a felhasználó szerepétől függnek. Ha a felhasználó szerepe már szerepel egy típusban, az nem lesz elérhető számára.
+- **JWT Token és Auth**: A kérelem beküldése előtt a komponens ellenőrzi, hogy a felhasználó be van-e jelentkezve (ellenőrizve a `localStorage`-ban található JWT token).
+- **Hibakezelés és visszajelzés**: A komponens hibák esetén megfelelő üzenetet jelenít meg, és a sikeres kérés után egy visszajelzést küld a felhasználónak.

@@ -2,5 +2,6 @@
 export default {
     database: "Adatbázis",
     endpoints: "Végpontok",
-    uniquemethods: "Egyedi metódusok"
+    uniquemethods: "Egyedi metódusok",
+    components: "Komponensek"
   };

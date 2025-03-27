@@ -1,0 +1,17 @@
+# ThemeToggle Komponens
+
+A **`ThemeToggle`** komponens lehetővé teszi a felhasználók számára, hogy váltogassák az alkalmazás világos és sötét témája között. Az alkalmazás a témát a felhasználó preferenciája szerint tárolja a helyi tárolóban (localStorage), és az új téma beállítását egy szolgáltatás (UserServices) segítségével frissíti a backend oldalon is.
+
+## **Funkciók**:
+
+1. **Téma váltása**:
+   - A `toggleTheme` függvény felelős azért, hogy a felhasználó a világos és sötét téma között válthasson.
+   - A téma állapota (`light` vagy `dark`) a **`theme`** állapot változóban van tárolva.
+
+2. **Helyi tároló használata**:
+   - A kiválasztott téma a helyi tárolóban (localStorage) kerül mentésre, hogy a felhasználó újraindításkor ne veszítse el a téma beállítást.
+   - A `setTheme` funkció frissíti az alkalmazás állapotát a témaváltáskor.
+
+3. **Backend frissítés**:
+   - Az új téma frissítése a backend szerver felé a `updateTheme` szolgáltatás hívásával történik.
+   - Ha hiba történik a téma frissítése közben, a hiba üzenet a konzolra kerül.

@@ -1,0 +1,12 @@
+# Új Fejezet Hozzáadása Komponens
+
+A `Chapters` komponens lehetővé teszi új fejezetek hozzáadását egy adott könyvhöz.
+
+## **Funkciók**:
+- **Fejezet számának meghatározása**: A komponens lekérdezi az adott könyvhöz tartozó fejezetek számát, és a következő fejezet sorszámát automatikusan beállítja.  
+- **Új fejezet hozzáadása**: A felhasználó megadhatja a fejezet címét és tartalmát, majd a "Mentés" gombra kattintva elküldheti azt a szerverre.  
+- **JWT autentikáció**: Az API hívások során az autentikáció JWT token segítségével történik.  
+- **Értesítések kezelése**: Sikeres vagy sikertelen műveletekről visszajelzést ad a `useToast` kontextus segítségével.  
+- **Navigáció**: A felhasználó visszatérhet a profil oldalára egy vissza gomb segítségével.  
+
+A komponens `useEffect` hookot használ a fejezet számának lekérdezésére, és `useState`-tel kezeli az űrlap mezőit.

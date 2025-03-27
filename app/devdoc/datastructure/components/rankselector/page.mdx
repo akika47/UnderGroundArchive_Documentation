@@ -1,0 +1,21 @@
+# RankSelector Komponens
+
+Ez a `RankSelector` komponens lehetővé teszi a felhasználók számára, hogy válasszanak egy rangot egy legördülő menüből. Az elérhető rangok a felhasználó profilja alapján töltődnek be. A felhasználó által kiválasztott rang a profilkép frissítésére is hatással van, és a változtatásokat az API segítségével tárolja a rendszer.
+
+## **Funkciók**:
+
+- **Rangok betöltése**:
+  - A felhasználó rangját a rendszer a profil adatain keresztül tölt be, és az elérhető rangokat az adott rang alapján határozza meg.
+  - A rangok listája a felhasználó `rankId` értéke alapján kerül dinamikusan generálásra.
+  
+- **Rang választás**:
+  - A felhasználó választhat egy rangot a ranglistából, amely az elérhető rangok számától függően jelenik meg.
+  - Minden egyes ranghoz hozzárendelt név jelenik meg, pl. "Beginner", "Novice", "Apprentice", stb.
+
+- **Rang frissítése**:
+  - A felhasználó által kiválasztott rang mentése az API segítségével történik.
+  - A rang mentése után a felhasználó profiljának frissítése automatikusan megtörténik, így a legfrissebb adatokat látja.
+
+- **Felhasználói interakciók**:
+  - A rangválasztás interaktívan történik: ha a felhasználó rákattint a legördülő menüre, akkor az összes elérhető rangot látja.
+  - A kiválasztott rang kiemelésre kerül, és a felhasználó visszajelzést kap, ha a rangváltoztatás sikeres volt.

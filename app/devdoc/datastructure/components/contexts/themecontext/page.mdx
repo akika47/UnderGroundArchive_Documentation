@@ -1,0 +1,14 @@
+# Téma Kezelő Komponens
+
+A `ThemeContext` komponens lehetővé teszi a felhasználói felület sötét és világos téma közötti váltását, és biztosítja, hogy a téma beállításai globálisan alkalmazva legyenek az alkalmazásban.
+
+## **Funkciók**:
+- **Téma tárolása**: A komponens a `useState` hook segítségével tárolja az aktuális témát (`theme`), amely lehet `light` vagy `dark`.  
+- **Téma mentése**: A felhasználó által választott téma mentésre kerül a `localStorage`-ba, így a következő oldalbetöltéskor megőrzi a választott témát.  
+- **Globális téma alkalmazása**: A `useEffect` hook segítségével a komponens automatikusan alkalmazza a kiválasztott témát a dokumentum `body` elemére, és beállítja a CSS változókat a témának megfelelően.  
+- **CSS változók frissítése**: A `lightTheme` és `darkTheme` objektumok használatával a komponens dinamikusan frissíti a CSS változókat, hogy azok az aktuális témának megfelelően jelenjenek meg.  
+- **Global Context használat**: A komponens a `ThemeContext` kontextust biztosít, amely lehetővé teszi a téma állapotának hozzáférését az alkalmazás bármely pontján.  
+- **Téma váltása**: A `setTheme` függvény segítségével a felhasználó könnyedén váltogathatja a világos és sötét téma között.  
+- **Téma osztályok**: A `light-theme` és `dark-theme` osztályokat dinamikusan hozzáadja a `body` elemhez, hogy a téma vizuálisan is alkalmazásra kerüljön.
+
+A komponens `useEffect` hookot használ a téma állapotának alkalmazására és a szükséges CSS változók frissítésére minden témaváltáskor.

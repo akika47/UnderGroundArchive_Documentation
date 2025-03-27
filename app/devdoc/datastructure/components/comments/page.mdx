@@ -1,0 +1,16 @@
+# Kommentek Kezelése Komponens
+
+A `Comments` komponens lehetővé teszi a felhasználók számára, hogy kommenteket és válaszokat küldjenek egy könyvhez, valamint kezeljék azokat.
+
+## **Funkciók**:
+- **Kommentek megjelenítése**: A komponens a `comments` API-ból lekéri az összes kommentet a kiválasztott könyvhöz, és azokat rendezetten megjeleníti.  
+- **Új komment hozzáadása**: A felhasználó új kommentet adhat hozzá a szöveges mező kitöltésével, majd a "Küldés" gombra kattintva elküldheti azt a szerverre.  
+- **Válaszok kezelése**: A felhasználók válaszolhatnak a kommentekre, melyeket a szülő kommentek alatt jelenít meg a rendszer.  
+- **Kommentek szerkesztése**: A felhasználó szerkesztheti a saját kommentjeit egy szöveges mezőn keresztül, majd a "Mentés" gombra kattintva elmentheti az új tartalmat.  
+- **Kommentek törlése**: A felhasználó törölheti saját kommentjeit a "Törlés" gomb segítségével.  
+- **Jelölés és értékelés**: A felhasználók lájkolhatják vagy diszlájkolhatják a kommenteket és válaszokat, és értékelhetik őket olvasói és kritikai vélemények alapján.  
+- **JWT autentikáció**: Az API hívások során az autentikáció JWT token segítségével történik.  
+- **Értesítések kezelése**: Sikeres vagy sikertelen műveletekről visszajelzést ad a `useToast` kontextus segítségével.  
+- **Kommentek kiterjesztése és összecsukása**: Ha egy kommenthez több válasz érkezik, azok alapértelmezetten csak az első válasz megjelenítése után láthatók, és a felhasználó bővítheti a válaszokat egy "Bővítés" gomb segítségével.  
+
+A komponens `useEffect` hookot használ a kommentek lekérdezésére és azok frissítésére, valamint `useState`-tel kezeli a kommentekhez és válaszokhoz tartozó állapotokat.  

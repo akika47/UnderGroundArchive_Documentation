@@ -1,0 +1,14 @@
+# Könyvek Komponens
+
+Ez a `Books` komponens egy könyvlistát jelenít meg, lehetővé téve a felhasználók számára, hogy könyveket böngésszenek, értékeljenek és kedvencekhez adjanak.  
+
+## **Funkciók**:
+- **Könyvek betöltése**: A komponens lekéri az összes könyvet, valamint azok szerzőit az API-ból.  
+- **Műfajok és kategóriák betöltése**: A könyvekhez tartozó műfajokat és kategóriákat is lekéri.  
+- **Felhasználói jogosultságok kezelése**: Az autentikációhoz JWT tokent használ, és az alapján állapítja meg a felhasználói szerepkört (pl. olvasó, kritikus).  
+- **Értékelések kezelése**: A felhasználók és kritikusok értékeléseit betölti és frissíti. Lehetőség van új értékelések mentésére és törlésére.  
+- **Kedvencek kezelése**: A felhasználók kedvenceikhez adhatják a könyveket, és azok listáját az API-ból tölti be.  
+- **Felhasználói adatok betöltése**: Az API-n keresztül lekéri a szerzők és egyéb felhasználók adatait.  
+- **Navigáció**: A React Router segítségével navigációs lehetőségeket biztosít.  
+
+A komponens több állapotot kezel (`useState`-tel), aszinkron adatlekéréseket végez (`useEffect`-tel), és egyéb alkomponenseket használ, például `StarRating`, `Comments` és `Favourites`.

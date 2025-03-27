@@ -1,0 +1,29 @@
+# RaindropBackground Komponens
+
+Ez a `RaindropBackground` komponens egy animált esőhatást jelenít meg, amely a háttérben fut. A komponens egy `<canvas>` elemet használ, amely dinamikusan frissíti az esőcseppeket és hullámokat. A komponens figyeli a böngésző ablakának átméretezését, és ennek megfelelően módosítja a vászon méretét. Az esőcseppek véletlenszerű pozícióban indulnak el, és a szélhatás szimulálásával mozognak a vásznon. A vízfolyások és az esőcseppek animálása folyamatosan történik, ami egy látványos vizuális élményt biztosít.
+
+## **Funkciók**:
+
+- **Esőcseppek animációja**:
+  - A komponens 80 véletlenszerűen elhelyezett esőcseppet generál, amelyek különböző sebességgel és hosszal mozognak lefelé a vásznon.
+  - Minden egyes csepp esése után a pozíciója és a sebessége frissül, miközben szélhatást is szimulálunk.
+
+- **Hullámok generálása**:
+  - Minden egyes csepp, amely eléri a vászon alját, egy hullámot generál, amely körkörös terjedéssel jelenik meg.
+  - A hullámok fokozatosan nőnek a kör keresztirányú sugaraival, majd eltűnnek, miután elérik a maximális méretüket.
+
+- **Szín dinamikus beállítása**:
+  - A `getColors` függvény segítségével a komponens dinamikusan használja az alapértelmezett `--primary` színt, amely a CSS változóból származik, vagy visszaesik egy alapértelmezett színre (világoskék árnyalat).
+  - A vízcseppek színe és átlátszósága az adott színváltozó alapján alakul.
+
+- **Automatikus vászonméretezés**:
+  - A vászon mérete a böngészőablak változásakor automatikusan frissül.
+  - A `handleResize` függvény biztosítja, hogy az esőcseppek az új vászonmérethez alkalmazkodjanak.
+
+- **Interaktív fényhatás**:
+  - Az eső animációja véletlenszerűen megnöveli a vászon fényességét, hogy különleges vizuális élményt adjon.
+  - A fényesség rövid időre emelkedik, majd visszatér az eredeti állapotába.
+
+- **Böngésző támogatás**:
+  - A komponens az ablak átméretezésekor újraszámolja a vászon méretét, hogy biztosítva legyen a reszponzív megjelenés.
+  - Az animáció folyamatosan fut, amíg a felhasználó a böngészőt nem zárja be vagy nem állítja meg a folyamatot.

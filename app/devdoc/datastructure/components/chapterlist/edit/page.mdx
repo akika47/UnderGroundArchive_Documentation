@@ -1,0 +1,12 @@
+# Fejezet Szerkesztés Komponens
+
+Az `EditChapter` komponens lehetővé teszi egy adott könyv fejezetének módosítását.  
+
+## **Funkciók**:
+- **Fejezet módosítása**: A felhasználó szerkesztheti a fejezet címét és tartalmát, majd mentheti a változtatásokat.  
+- **Adatok betöltése**: A komponens az URL paraméterekből (`bookId`, `chapterId`, `chapterNumber`) nyeri ki a szükséges adatokat.  
+- **JWT autentikáció**: Az API hívások során az autentikációt JWT token segítségével végzi.  
+- **Értesítések kezelése**: A sikeres vagy sikertelen műveletekről visszajelzést ad a felhasználónak (`useToast`).  
+- **Űrlapkezelés**: Az adatok bevitelére egy űrlapot biztosít, amely validálja a beírt értékeket.  
+
+A komponens `useState`-et használ az űrlapmezők kezelésére és a React Router `useParams` hookját az URL paraméterek kiolvasásához.

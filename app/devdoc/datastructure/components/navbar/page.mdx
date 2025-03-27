@@ -1,0 +1,10 @@
+# Navigációs Sáv Komponens
+
+Ez a `Navbar` komponens egy oldalsó navigációs sávot biztosít, amely különböző linkeket tartalmaz a felhasználói státusz alapján. A sáv automatikusan bővül és összehúzódik, ha a felhasználó az egérrel a navigációs sávra húzza a kurzort. Az egyes linkek és funkciók a felhasználó bejelentkezési állapota szerint dinamikusan változnak.
+
+## **Funkciók**:
+- **Felhasználói státusz alapú navigáció**: 
+  - Ha a felhasználó nem vendég (`user !== "guest"`), hozzáférhet olyan menüpontokhoz, mint a "Publikálás", "Könyvek", "Profil", "Beállítások", "GYIK" és "Kérelmek".
+  - Ha a felhasználó vendég (`user === "guest"`), a menü "Bejelentkezés" és "Regisztráció" linkeket kínál.
+- **Kijelentkezés**: A felhasználó számára lehetőség van a kijelentkezésre, amely eltávolítja a felhasználói adatokat a kontextusból és átirányítja őt a bejelentkezési oldalra.
+- **Interaktív oldalsó navigáció**: A navigációs sáv bővül, amikor az egér a sávon belül van, és összehúzódik, ha az egér elhagyja a sávot.

@@ -1,0 +1,16 @@
+# Request Komponens
+
+A **`Request`** komponens egy oldal, amely lehetővé teszi a felhasználók számára, hogy két különböző nézet között navigáljanak: egy **"Saját kérelmeim"** nézet és egy **"Új kérelem létrehozása"** nézet. A két nézet közötti navigálás animált gombok segítségével történik.
+
+## **Funkciók**:
+
+1. **Két nézet**: 
+   - **Saját kérelmeim**: A felhasználó megtekintheti a már benyújtott kérelmeit (ezt a `MyRequests` komponens biztosítja).
+   - **Új kérelem létrehozása**: A felhasználó új kérelmet adhat be (ezt a `NewRequest` komponens biztosítja).
+
+2. **Navigációs gombok**:
+   - Az oldal tartalma dinamikusan vált a két nézet között. Az egyes nézetek között egy **balra és jobbra mutató nyíl** segítségével lehet navigálni.
+   - A navigációs gombok különböznek attól függően, hogy éppen melyik nézet van aktív.
+
+3. **CSS Animációk és Stílusok**:
+   - Az **`requestContent`** osztály dinamikusan változik, hogy biztosítsa a nézetek közötti animált váltást.

@@ -1,0 +1,9 @@
+# Kedvencek kezelése Komponens
+
+A `Favourites` komponens célja, hogy kezelje egy könyv (vagy fejezet) kedvencekhez adását és eltávolítását, a kedvencek állapotának dinamikus frissítésével.
+
+## **Funkciók**:
+- **Kedvencek hozzáadása és eltávolítása**: A komponens biztosítja a kedvenc könyvek kezelését, amely lehetőséget biztosít a felhasználónak arra, hogy egy könyvet hozzáadjon vagy eltávolítson a kedvencei közül. Az állapotot a `favourite` változó tárolja.
+- **Szerver kommunikáció**: A `addFavourite` és `deleteFavourite` függvények segítségével a szerverrel való kommunikációt végzi a könyv kedvencekhez adása és eltávolítása érdekében.
+- **Dinamikus ikonok**: Az ikonok (Bookmark) változnak a kedvenc állapotának megfelelően. Ha a könyv kedvenc, a `BsBookmarkFill` (teljesített könyvjelző) jelenik meg, ha nem, akkor a `BsBookmark` (üres könyvjelző).
+- **Hibakezelés**: A szerver hívások hibáit kezeljük, és a konzolra hibaüzenetet írunk ki.

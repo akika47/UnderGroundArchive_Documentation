@@ -1,0 +1,28 @@
+# PublishBook Komponens
+
+Ez a `PublishBook` komponens lehetővé teszi a könyvek publikálását a felhasználók számára. A felhasználók megadhatják a könyv nevét, műfaját, kategóriáját és leírását, majd a rendszer ezen adatok alapján elküldi a könyvet a szervernek. A komponens ellenőrzi, hogy a felhasználó rendelkezik-e megfelelő jogosultsággal a könyv publikálásához, és csak akkor engedélyezi a publikálást, ha a felhasználó "Author" szerepkörrel rendelkezik.
+
+## **Funkciók**:
+
+- **Könyv adatai**:
+  - A felhasználó megadhatja a könyv nevét, műfaját, kategóriáját és leírását.
+  - A műfajok és kategóriák listáját a szerver biztosítja, és azok legördülő listában jelennek meg.
+
+- **Műfaj és kategória választás**:
+  - A felhasználó a legördülő listából választhat műfajt és kategóriát, amelyhez a könyvet hozzá kívánja rendelni.
+  
+- **Könyv publikálása**:
+  - A felhasználó által megadott adatokat a komponens elküldi a szervernek egy `POST` kérésben.
+  - A rendszer automatikusan figyeli a válaszokat, és értesíti a felhasználót a sikeres vagy sikertelen publikálásról.
+
+- **Felhasználói jogosultság ellenőrzése**:
+  - A komponens ellenőrzi, hogy a felhasználó rendelkezik-e "Author" szerepkörrel. Ha nem, akkor a könyv publikálása nem engedélyezett.
+  - A jogosultságok ellenőrzéséhez a JWT token alapján történik az authentikáció.
+
+- **Interaktív felhasználói élmény**:
+  - A komponens folyamatosan frissíti az adatokat a felhasználói interakciók alapján.
+  - A felhasználó visszajelzést kap arról, hogy sikerült-e a könyv publikálása, és ha valami hiba történt, akkor a hibaüzenet is megjelenik.
+
+- **Hibakezelés**:
+  - A komponens hibaüzenetet jelenít meg, ha bármelyik mező üresen marad, vagy ha a felhasználó nem rendelkezik megfelelő jogosultságokkal.
+  - A hibák kezelése intuitív módon történik, így a felhasználó gyorsan tisztában lehet a problémákkal.

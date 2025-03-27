@@ -1,0 +1,19 @@
+# ToastNotification Komponens
+
+A **`ToastNotification`** komponens egy értesítési rendszert valósít meg, amely rövid üzeneteket jelenít meg a felhasználónak. A komponens használható sikeres (success) vagy hibás (error) üzenetek megjelenítésére, és az üzenet automatikusan eltűnik egy idő után vagy a felhasználó bezárja azt.
+
+## **Funkciók**:
+
+1. **Toast Üzenet**:
+   - A komponens egy üzenetet jelenít meg, amelyet az `onClose` függvény segítségével lehet eltüntetni.
+   - A komponens két típusú értesítést támogat: **success** és **error**.
+   
+2. **Automatikus eltűnés**:
+   - Az üzenet 3 másodperc után automatikusan eltűnik, miután elindul a **fade-out** animáció.
+   - Az **`useEffect`** hook felelős a toast megjelenítéséért és eltűnéséért. 
+   
+3. **Bezárás gomb**:
+   - Az üzenet mellett található egy **`×`** gomb, amellyel a felhasználó manuálisan is bezárhatja az értesítést.
+
+4. **Animáció**:
+   - A komponens animálja az üzenet eltűnését a `fade-out` osztály hozzáadásával, ami sima elhalványulást biztosít.

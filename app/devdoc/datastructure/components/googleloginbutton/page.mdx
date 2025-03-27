@@ -1,0 +1,12 @@
+# Google Login Komponens
+
+A `GoogleLoginButton` komponens lehetővé teszi a felhasználók számára, hogy Google fiókkal jelentkezzenek be a webalkalmazásba, és kezeli a bejelentkezés utáni folyamatokat.
+
+## **Funkciók**:
+- **Google bejelentkezés**: A felhasználó Google fiókjával történő bejelentkezést tesz lehetővé a `@react-oauth/google` könyvtár `GoogleLogin` komponensével.
+- **JWT token kezelése**: A Google OAuth sikeres bejelentkezése után az alkalmazás szerverével való kommunikációval kapunk egy JWT (JSON Web Token) választ, amelyet a felhasználó autentikációjához használunk.
+- **Felhasználói adatok betöltése**: A sikeres bejelentkezést követően a felhasználó adatainak lekérése történik, amelyet a `useUserContext` segítségével beállítunk.
+- **Téma beállítása**: Ha a felhasználó rendelkezik beállított témával, azt is frissítjük a `useThemeContext` segítségével.
+
+## **Használt Könyvtárak**:
+- **@react-oauth/google**: A Google OAuth logikát kezelő könyvtár.

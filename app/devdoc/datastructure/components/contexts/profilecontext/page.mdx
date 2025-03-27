@@ -1,0 +1,14 @@
+# Felhasználói Profil Konteksztus Komponens
+
+A `ProfileContext` komponens lehetővé teszi a felhasználói profil adatainak központi tárolását és kezelését a React alkalmazásban. A komponens biztosítja a felhasználói profil adatainak elérését és frissítését a különböző alkalmazás részek között.
+
+## **Funkciók**:
+- **Felhasználói profil tárolása**: A komponens egy `useState` hook segítségével tárolja a felhasználói adatokat (`userProfile`), amely tartalmazza a felhasználó nevét, e-mail címét, telefonszámát, rangját és más adatokat.  
+- **Profil lekérése**: A `fetchUserProfile` funkció segítségével a felhasználói profil adatai lekérdezésre kerülnek a szerverről egy JWT token segítségével.  
+- **JWT autentikáció**: Az API hívások során az autentikáció JWT tokennel történik, amely a helyi tárolóból (`localStorage`) kerül előhívásra.  
+- **Profil frissítése**: A `setUserProfile` függvény segítségével a profil adatokat dinamikusan frissíthetjük a komponens állapotában.  
+- **Global Context használat**: A komponens a `ProfileContext` kontextust biztosít, amely lehetővé teszi a felhasználói adatok hozzáférését az alkalmazás bármely pontján.  
+- **Profil adatok elérhetősége**: A `useProfileContext` hook segítségével a komponensből könnyen hozzáférhetünk a profiladatokhoz.  
+- **Hibakezelés**: Amennyiben a profil adatainak lekérése során hiba történik, a rendszer hibát jelez a konzolon, hogy segítse a hibaelhárítást.
+
+A komponens `useEffect` hookot használ a felhasználói profil adatainak inicializálására az oldal betöltésekor, és `useState`-tel kezeli a profiladatok állapotát.

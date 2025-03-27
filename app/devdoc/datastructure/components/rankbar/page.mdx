@@ -1,0 +1,31 @@
+# RankBar Komponens
+
+Ez a `RankBar` komponens egy felhasználó rangját és rangfrissítési állapotát jeleníti meg, miközben az előrehaladást is vizualizálja a rangok elérésében. Az aktuális rang és a következő rang közötti előrehaladást egy progresszív sávban mutatja, amely a felhasználó pontjai alapján frissül. A komponens dinamikusan lekéri a rangokat a szerverről, majd kiszámítja az aktuális rangot, a következő ranghoz szükséges pontokat, és megjeleníti azokat.
+
+## **Funkciók**:
+
+1. **Rangok lekérése**:
+   - A rangok adatokat egy `fetch` kérés segítségével kéri le a szerverről.
+   - A szerver válaszából a rangok egy listája kerül mentésre a `ranks` állapotba.
+
+2. **Aktuális rang meghatározása**:
+   - Az aktuális rang a `rankId` alapján kerül meghatározásra.
+   - A rangok közül az aktuális rangot keresve a megfelelő rangot a `ranks` listából.
+
+3. **Következő rang meghatározása**:
+   - A következő rangot az aktuális rangot követő rang alapján állítja be a rendszer.
+   - Ha nincs következő rang, a progresszív sáv 100%-ra lesz állítva.
+
+4. **Előrehaladás kiszámítása**:
+   - Az előrehaladás a felhasználó pontjai és a rangok közötti különbség alapján történik.
+   - A progresszív sáv a kiszámított előrehaladást vizualizálja.
+
+5. **Rang frissítése**:
+   - Amikor a felhasználó eléri a következő ranghoz szükséges pontszámot, egy `PATCH` kérés kerül küldésre a rang frissítése érdekében.
+   - A rangfrissítési kérés sikeres végrehajtása után a `onRankUpdate` callback függvény hívódik meg, amely frissíti a rangokat a szülő komponensben.
+
+6. **Loading állapot**:
+   - A komponens kezdetben betölti a rangokat, és a rangok lekérése alatt egy "Rangok betöltése..." üzenet jelenik meg.
+
+7. **Stílusok**:
+   - A rangok és az előrehaladás sávja megfelelő CSS osztályok segítségével van formázva a vizuális megjelenítéshez.

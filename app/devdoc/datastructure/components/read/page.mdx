@@ -1,0 +1,20 @@
+# Read Komponens
+
+Ez a `Read` komponens lehetővé teszi a felhasználók számára, hogy olvassanak egy könyvet, és navigáljanak a fejezetek között. A komponens a könyv adatait és a fejezetek tartalmát dinamikusan tölti be az API-ból. A felhasználó kedvenc fejezetét is elmentheti, és a rendszer automatikusan frissíti a legutóbb olvasott fejezet számát.
+
+## **Funkciók**:
+
+- **Kedvenc fejezet betöltése**:
+  - A komponens lekéri a felhasználó kedvenc fejezetét az API-ból, és ha van, akkor a legutolsó olvasott fejezet számát beállítja.
+  - A kedvenc fejezet a felhasználó által korábban elmentett fejezetet jelenti, és ez alapján indul a könyv olvasása.
+
+- **Fejezetek száma**:
+  - A rendszer lekéri a könyv összes fejezetének számát az API-ból, hogy meghatározhassa, hogy hány fejezet érhető el, és hogyan navigálhat a felhasználó közöttük.
+  
+- **Fejezetek megjelenítése**:
+  - A felhasználó aktuális fejezete dinamikusan betöltésre kerül az API segítségével, és a komponens megjeleníti a fejezet címét és tartalmát.
+  - Az olvasó navigálhat a fejezetek között, előző és következő fejezetek közötti váltással.
+
+- **Navigálás a fejezetek között**:
+  - A felhasználó a "Következő oldal" és "Előző oldal" gombok segítségével navigálhat a fejezetek között.
+  - Ha az utolsó fejezeten van, akkor a "Következő oldal" gomb nem elérhető, hasonlóan az első fejezethez, amikor az "Előző oldal" gomb inaktívvá válik.

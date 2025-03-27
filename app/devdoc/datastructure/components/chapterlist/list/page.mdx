@@ -1,0 +1,13 @@
+# Fejezetlista Komponens
+
+A `ChapterList` komponens egy adott könyv fejezeteit jeleníti meg, lehetővé téve azok szerkesztését és törlését.  
+
+## **Funkciók**:
+- **Fejezetek betöltése**: Az API-ból lekéri a kiválasztott könyv összes fejezetét.  
+- **Fejezet törlése**: A felhasználó törölhet egy fejezetet, amelyet az API végpontján keresztül kezel.  
+- **Fejezet szerkesztése**: A felhasználó egy fejezet szerkesztő oldalra navigálhat.  
+- **Visszalépés a profilhoz**: Egy gomb segítségével visszanavigálhat a profil oldalra.  
+- **JWT autentikáció**: A komponens a felhasználói jogosultságok ellenőrzéséhez JWT tokent használ.  
+- **Értesítések kezelése**: Az egyes műveletek után visszajelzést ad a felhasználónak (`useToast`).  
+
+A komponens aszinkron adatlekéréseket végez (`useEffect`-tel), és a React Router segítségével biztosít navigációs lehetőségeket.
