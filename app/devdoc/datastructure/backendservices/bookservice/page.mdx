@@ -1,0 +1,62 @@
+# BookService Dokumentáció
+
+## **1. Áttekintés**
+A `BookService` osztály felelős a könyvekkel kapcsolatos üzleti logika implementálásáért. Az `IBookService` interfészt implementálja, és az Entity Framework Core-t használja az adatbázis műveletek végrehajtásához.
+
+## **2. Függőségek**
+- **`UGA_DBContext`**: Az adatbázis kontextus, amelyen keresztül az Entity Framework műveleteket hajtunk végre
+- **`Microsoft.EntityFrameworkCore`**: Az EF Core funkcióinak eléréséhez szükséges
+
+## **3. Metódusok**
+
+### **3.1. PublishBookAsync**
+```csharp
+public async Task<bool> PublishBookAsync(Books book)
+{
+    _context.Books.Add(book);
+    await _context.SaveChangesAsync();
+    return true;
+}
+```
+
+#### **Feladat**:
+- Új könyv publikálása az adatbázisba
+
+#### **Paraméterek**:
+- `book` (`Books` típusú): A publikálandó könyv entitás
+
+#### **Visszatérési érték**:
+- `bool`: Mindig `true` értékkel tér vissza (sikeres művelet esetén)
+
+#### **Működés**:
+1. Hozzáadja a könyvet az adatbázis kontextushoz
+2. Aszinkron módon menti a változtatásokat
+3. Visszaad egy sikerjelzést
+
+#### **Kivételek**:
+- `DbUpdateException`: Ha az adatbázis művelet sikertelen
+- `ArgumentNullException`: Ha a `book` paraméter null
+
+---
+
+### **3.2. GetBooksAsync**
+```csharp
+public async Task<IEnumerable<Books>> GetBooksAsync()
+{
+    return await _context.Books.ToListAsync();
+}
+```
+
+#### **Feladat**:
+- Összes könyv lekérdezése az adatbázisból
+
+#### **Visszatérési érték**:
+- `IEnumerable<Books>`: A könyvek listája
+
+#### **Működés**:
+1. Lekéri az összes könyvet az adatbázisból
+2. Aszinkron módon listává alakítja az eredményt
+3. Visszaadja a könyvek listáját
+
+#### **Kivételek**:
+- `InvalidOperationException`: Ha az adatbázis elérése sikertelen

@@ -1,0 +1,254 @@
+# Adatbázis Szerkezet
+
+![Database Schema](/images/database.png)
+
+Ez a dokumentáció az alkalmazás adatbázisának tábláit és mezőit magyarázza el, valamint azok összekapcsolását idegen kulcsokkal.
+
+## **Táblák és kapcsolatok**
+
+### **1. Achievements**
+- **Leírás**: A felhasználók által elért eredmények tárolása.
+- **Mezők**:
+  - `AchievementId` (int): Az eredmény azonosítója (elsődleges kulcs).
+  - `BookId` (int): Az elért eredményhez kapcsolódó könyv azonosítója.
+  - `PointAmount` (int): Az eredményhez rendelt pontszám.
+  - `AchievementDescription` (longtext): Az eredmény leírása.
+- **Kapcsolatok**:
+  - `BookId` → `books.BookId`: Az eredmény a könyvhöz kapcsolódik.
+
+### **2. AspNetRoleClaims**
+- **Leírás**: A szerepekhez tartozó jogosultságok tárolása.
+- **Mezők**:
+  - `Id` (int): Az állítás azonosítója (elsődleges kulcs).
+  - `RoleId` (varchar(255)): A szerep azonosítója.
+  - `ClaimType` (longtext): A jogosultság típusa.
+  - `ClaimValue` (longtext): A jogosultság értéke.
+- **Kapcsolatok**:
+  - `RoleId` → `aspnetroles.Id`: A szerep az `aspnetroles` táblához kapcsolódik.
+
+### **3. AspNetRoles**
+- **Leírás**: A rendszer szerepeit tároló tábla.
+- **Mezők**:
+  - `Id` (varchar(255)): A szerep azonosítója (elsődleges kulcs).
+  - `Name` (varchar(256)): A szerep neve.
+  - `NormalizedName` (varchar(256)): A szerep normalizált neve.
+  - `ConcurrencyStamp` (longtext): A verziókezeléshez használt mező.
+- **Kapcsolatok**:
+  - Nincs idegen kulcs kapcsolat.
+
+### **4. AspNetUserClaims**
+- **Leírás**: A felhasználókhoz tartozó jogosultságok tárolása.
+- **Mezők**:
+  - `Id` (int): Az állítás azonosítója (elsődleges kulcs).
+  - `UserId` (varchar(255)): A felhasználó azonosítója.
+  - `ClaimType` (longtext): A jogosultság típusa.
+  - `ClaimValue` (longtext): A jogosultság értéke.
+- **Kapcsolatok**:
+  - `UserId` → `aspnetusers.Id`: A felhasználói jogosultság a felhasználóhoz kapcsolódik.
+
+### **5. AspNetUserLogins**
+- **Leírás**: A felhasználók külső bejelentkezési adatainak tárolása.
+- **Mezők**:
+  - `LoginProvider` (varchar(255)): A bejelentkezési szolgáltató (elsődleges kulcs).
+  - `ProviderKey` (varchar(255)): A szolgáltató azonosítója (elsődleges kulcs).
+  - `ProviderDisplayName` (longtext): A szolgáltató megjelenített neve.
+  - `UserId` (varchar(255)): A felhasználó azonosítója.
+- **Kapcsolatok**:
+  - `UserId` → `aspnetusers.Id`: A felhasználó a `aspnetusers` táblához kapcsolódik.
+
+### **6. AspNetUserRoles**
+- **Leírás**: A felhasználók és szerepek közötti kapcsolatot tároló tábla.
+- **Mezők**:
+  - `UserId` (varchar(255)): A felhasználó azonosítója (elsődleges kulcs).
+  - `RoleId` (varchar(255)): A szerep azonosítója (elsődleges kulcs).
+- **Kapcsolatok**:
+  - `UserId` → `aspnetusers.Id`: A felhasználó a `aspnetusers` táblához kapcsolódik.
+  - `RoleId` → `aspnetroles.Id`: A szerep az `aspnetroles` táblához kapcsolódik.
+
+### **7. AspNetUsers**
+- **Leírás**: A rendszer felhasználóit tároló tábla.
+- **Mezők**:
+  - `Id` (varchar(255)): A felhasználó azonosítója (elsődleges kulcs).
+  - `RankId` (int): A felhasználó rangjának azonosítója.
+  - `SubscriptionId` (int): A felhasználó előfizetésének azonosítója.
+  - `JoinDate` (datetime): A felhasználó csatlakozásának dátuma.
+  - `BirthDate` (datetime): A felhasználó születési dátuma.
+  - `Country` (longtext): A felhasználó országa.
+  - `RankPoints` (int): A felhasználó rangpontjai.
+  - `Balance` (decimal(65,2)): A felhasználó egyenlege.
+  - `Favourites` (longtext): A felhasználó kedvencei.
+  - `UserName` (varchar(256)): A felhasználó neve.
+  - `NormalizedUserName` (varchar(256)): Normalizált felhasználónév.
+  - `Email` (varchar(256)): E-mail cím.
+  - `NormalizedEmail` (varchar(256)): Normalizált e-mail cím.
+  - `EmailConfirmed` (boolean): E-mail megerősítve.
+  - `PasswordHash` (longtext): Jelszó hash.
+  - `SecurityStamp` (longtext): Biztonsági pecsét.
+  - `ConcurrencyStamp` (longtext): Egyidejűségi pecsét.
+  - `PhoneNumber` (longtext): Telefonszám.
+  - `PhoneNumberConfirmed` (boolean): Telefonszám megerősítve.
+  - `TwoFactorEnabled` (boolean): Kétfaktoros hitelesítés engedélyezve.
+  - `LockoutEnd` (datetime): Zárolás vége.
+  - `LockoutEnabled` (boolean): Zárolás engedélyezve.
+  - `AccessFailedCount` (int): Sikertelen bejelentkezések száma.
+  - `Theme` (longtext): Felhasználó témája.
+  - `IsBanned` (boolean): Letiltva-e (alapértelmezett: false).
+  - `IsMuted` (boolean): Némítva-e (alapértelmezett: false).
+  - `ProfilePictureId` (int): Profilkép azonosítója.
+- **Kapcsolatok**:
+  - `RankId` → `ranks.RankId`: A felhasználó rangja a `ranks` táblához kapcsolódik.
+  - `SubscriptionId` → `subscription.SubscriptionId`: Az előfizetés a `subscription` táblához kapcsolódik.
+
+### **8. Books**
+- **Leírás**: A rendszer könyveit tároló tábla.
+- **Mezők**:
+  - `BookId` (int): A könyv azonosítója (elsődleges kulcs).
+  - `BookName` (longtext): A könyv neve.
+  - `AuthorId` (varchar(255)): A szerző azonosítója.
+  - `GenreId` (int): A műfaj azonosítója.
+  - `CategoryId` (int): A kategória azonosítója.
+  - `BookDescription` (longtext): A könyv leírása.
+  - `ApplicationUserId` (varchar(255)): Az alkalmazás felhasználójának azonosítója.
+- **Kapcsolatok**:
+  - `AuthorId` → `aspnetusers.Id`: A szerző a felhasználóhoz kapcsolódik.
+  - `GenreId` → `genre.GenreId`: A műfaj a `genre` táblához kapcsolódik.
+  - `CategoryId` → `categories.CategoryId`: A kategória a `categories` táblához kapcsolódik.
+  - `ApplicationUserId` → `aspnetusers.Id`: Az alkalmazás felhasználója.
+
+### **9. Categories**
+- **Leírás**: A könyvek kategóriáit tároló tábla.
+- **Mezők**:
+  - `CategoryId` (int): A kategória azonosítója (elsődleges kulcs).
+  - `CategoryName` (varchar(255)): A kategória neve.
+  - `IsAgeRestricted` (boolean): Korhatáros-e a kategória.
+- **Kapcsolatok**:
+  - Nincs idegen kulcs kapcsolat.
+
+### **10. Chapters**
+- **Leírás**: A könyvek fejezeteit tároló tábla.
+- **Mezők**:
+  - `ChapterId` (int): A fejezet azonosítója (elsődleges kulcs).
+  - `BookId` (int): A könyv azonosítója.
+  - `ChapterNumber` (int): A fejezet száma.
+  - `ChapterTitle` (longtext): A fejezet címe.
+  - `ChapterContent` (longtext): A fejezet tartalma.
+- **Kapcsolatok**:
+  - `BookId` → `books.BookId`: A fejezet a könyvhöz kapcsolódik.
+
+### **11. Comments**
+- **Leírás**: A könyvekhez tartozó kommentek tárolása.
+- **Mezők**:
+  - `CommentId` (int): A komment azonosítója (elsődleges kulcs).
+  - `BookId` (int): A könyv azonosítója.
+  - `CommentMessage` (longtext): A komment szövege.
+  - `CommenterId` (varchar(255)): A kommentelő azonosítója.
+  - `CreatedAt` (datetime): Létrehozás időpontja.
+  - `ModifiedAt` (datetime): Módosítás időpontja.
+  - `ParentCommentId` (int): Szülő komment azonosítója.
+  - `ThreadId` (int): A kommentszál azonosítója.
+- **Kapcsolatok**:
+  - `BookId` → `books.BookId`: A komment a könyvhöz kapcsolódik.
+  - `CommenterId` → `aspnetusers.Id`: A kommentelő a felhasználóhoz kapcsolódik.
+  - `ParentCommentId` → `comments.CommentId`: A szülő komment a kommenthez kapcsolódik.
+
+### **12. CompletedAchievements**
+- **Leírás**: A felhasználók által teljesített eredmények tárolása.
+- **Mezők**:
+  - `Id` (int): Az azonosító (elsődleges kulcs).
+  - `AchievementId` (int): Az eredmény azonosítója.
+  - `CompleterId` (int): A teljesítő azonosítója.
+- **Kapcsolatok**:
+  - `AchievementId` → `achievements.AchievementId`: Az eredmény az achievements táblához kapcsolódik.
+  - `CompleterId` → `aspnetusers.Id`: A teljesítő a felhasználóhoz kapcsolódik.
+
+### **13. CriticRatings**
+- **Leírás**: Kritikusok által adott értékelések tárolása.
+- **Mezők**:
+  - `RatingId` (int): Az értékelés azonosítója (elsődleges kulcs).
+  - `BookId` (int): A könyv azonosítója.
+  - `RatingValue` (int): Az értékelés értéke.
+  - `RaterId` (varchar(255)): Az értékelő azonosítója.
+  - `CreatedAt` (datetime): Létrehozás időpontja.
+  - `ModifiedAt` (datetime): Módosítás időpontja.
+  - `RatingDescription` (longtext): Az értékelés leírása.
+- **Kapcsolatok**:
+  - `BookId` → `books.BookId`: Az értékelés a könyvhöz kapcsolódik.
+  - `RaterId` → `aspnetusers.Id`: Az értékelő a felhasználóhoz kapcsolódik.
+
+### **14. Genre**
+- **Leírás**: A könyvek műfajait tároló tábla.
+- **Mezők**:
+  - `GenreId` (int): A műfaj azonosítója (elsődleges kulcs).
+  - `GenreName` (longtext): A műfaj neve.
+  - `IsAgeRestricted` (boolean): Korhatáros-e a műfaj.
+- **Kapcsolatok**:
+  - Nincs idegen kulcs kapcsolat.
+
+### **15. Ranks**
+- **Leírás**: A felhasználói rangokat tároló tábla.
+- **Mezők**:
+  - `RankId` (int): A rang azonosítója (elsődleges kulcs).
+  - `RankName` (longtext): A rang neve.
+  - `PointsRequired` (int): A ranghoz szükséges pontok.
+  - `PointsDescription` (longtext): A rang leírása.
+- **Kapcsolatok**:
+  - Nincs idegen kulcs kapcsolat.
+
+### **16. ReaderRatings**
+- **Leírás**: Olvasók által adott értékelések tárolása.
+- **Mezők**:
+  - `RatingId` (int): Az értékelés azonosítója (elsődleges kulcs).
+  - `BookId` (int): A könyv azonosítója.
+  - `RatingValue` (int): Az értékelés értéke.
+  - `RaterId` (varchar(255)): Az értékelő azonosítója.
+  - `CreatedAt` (datetime): Létrehozás időpontja.
+  - `ModifiedAt` (datetime): Módosítás időpontja.
+  - `RatingDescription` (longtext): Az értékelés leírása.
+- **Kapcsolatok**:
+  - `BookId` → `books.BookId`: Az értékelés a könyvhöz kapcsolódik.
+  - `RaterId` → `aspnetusers.Id`: Az értékelő a felhasználóhoz kapcsolódik.
+
+### **17. Reports**
+- **Leírás**: Bejelentések tárolása.
+- **Mezők**:
+  - `ReportId` (int): A bejelentés azonosítója (elsődleges kulcs).
+  - `ReporterId` (varchar(255)): A bejelentő azonosítója.
+  - `ReportTypeId` (int): A bejelentés típusa.
+  - `ReportMessage` (longtext): A bejelentés üzenete.
+  - `IsHandled` (boolean): Kezelt-e a bejelentés.
+  - `CreatedAt` (datetime): Létrehozás időpontja.
+  - `ReportedPersonId` (varchar(255)): A bejelentett személy azonosítója.
+- **Kapcsolatok**:
+  - `ReporterId` → `aspnetusers.Id`: A bejelentő a felhasználóhoz kapcsolódik.
+  - `ReportTypeId` → `reporttypes.ReportTypeId`: A bejelentés típusa a reporttypes táblához kapcsolódik.
+  - `ReportedPersonId` → `aspnetusers.Id`: A bejelentett személy a felhasználóhoz kapcsolódik.
+
+### **18. ReportTypes**
+- **Leírás**: A bejelentések típusait tároló tábla.
+- **Mezők**:
+  - `ReportTypeId` (int): A típus azonosítója (elsődleges kulcs).
+  - `ReportTypeName` (longtext): A típus neve.
+- **Kapcsolatok**:
+  - Nincs idegen kulcs kapcsolat.
+
+### **19. Requests**
+- **Leírás**: Felhasználói kérelmek tárolása.
+- **Mezők**:
+  - `RequestId` (int): A kérelem azonosítója (elsődleges kulcs).
+  - `RequesterId` (varchar(255)): A kérelmező azonosítója.
+  - `RequestDate` (datetime): A kérelem dátuma.
+  - `IsApproved` (boolean): Jóváhagyva van-e.
+  - `RequestType` (int): A kérelem típusa.
+  - `RequestMessage` (longtext): A kérelem üzenete.
+  - `IsHandled` (boolean): Kezelt-e (alapértelmezett: false).
+- **Kapcsolatok**:
+  - `RequesterId` → `aspnetusers.Id`: A kérelmező a felhasználóhoz kapcsolódik.
+
+### **20. Subscription**
+- **Leírás**: Előfizetési csomagok tárolása.
+- **Mezők**:
+  - `SubscriptionId` (int): Az előfizetés azonosítója (elsődleges kulcs).
+  - `SubscriptionName` (longtext): Az előfizetés neve.
+  - `SubscriptionDescription` (longtext): Az előfizetés leírása.
+- **Kapcsolatok**:
+  - Nincs idegen kulcs kapcsolat.

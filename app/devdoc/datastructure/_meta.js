@@ -6,4 +6,5 @@ export default {
     components: "Komponensek",
     frontendservices: "Frontend Szolgáltatások",
     backendservices: "Backend Szolgáltatások",
+    modelsdtos: "Modellek és DTO-k"
   };
