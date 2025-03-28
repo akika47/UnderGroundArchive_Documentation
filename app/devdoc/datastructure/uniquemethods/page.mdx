@@ -1,0 +1,94 @@
+# Érdekes / Fontos Funkciók
+
+## **Teljesítménykezelő Rendszer**
+A dokumentáció két Achievement helper függvényt ír le, amelyek automatikusan kezelik a felhasználói teljesítmények kiosztását a kommentelési és könyvkötési tevékenységek alapján.
+
+## **1. Komment-alapú Teljesítmények (`GrantAchievementIfEligible`)**
+
+### **Teljesítmény Szintek**
+| ID | Szükséges kommentek | Név | Leírás |
+|----|---------------------|-----|--------|
+| 4 | 1 | Első szavak | Első komment elküldése |
+| 5 | 10 | Elkötelezett olvasó | 10 komment |
+| ... | ... | ... | ... |
+| 12 | 5000 | Örökkévaló visszhang | 5000 komment |
+
+### **Működés**
+- A felhasználó összes kommentjének számolása
+- Progresszív ellenőrzés minden szinthez
+- Pontok hozzáadása a profilhoz
+
+---
+
+## **2. Könyv-alapú Teljesítmények (`GrantAchievementIfEligible`)**
+
+### **Teljesítmény Szintek**
+| ID | Szükséges könyvek | Név | Leírás |
+|----|------------------|-----|--------|
+| 1 | 1 | Első lépések | Első könyv publikálása |
+| 2 | 5 | Kezdő író | 5 könyv publikálása |
+| 3 | 10 | Mester mesélő | 10 könyv publikálása |
+
+### **Működés**
+```csharp
+private async Task GrantAchievementIfEligible(string userId, int publishedBookCount)
+{
+    // Felhasználó ellenőrzése
+    var user = await _dbContext.Users.FindAsync(userId);
+    if (user == null) return;
+
+    // Teljesítmény lista
+    var achievements = new List<(int Id, int Required)>
+    {
+        (1, 1), (2, 5), (3, 10)
+    };
+
+    // Ellenőrzés minden szintre
+    foreach (var (id, required) in achievements)
+    {
+        if (publishedBookCount >= required)
+        {
+            // Megnézzük, már megvan-e
+            bool exists = await _dbContext.CompletedAchievements
+                .AnyAsync(ca => ca.AchievementId == id && ca.CompleterId == userId);
+
+            if (!exists)
+            {
+                // Kiosztás és pontok hozzáadása
+                var achievement = await _dbContext.Achievements.FindAsync(id);
+                if (achievement != null)
+                {
+                    _dbContext.CompletedAchievements.Add(new CompletedAchievements
+                    {
+                        AchievementId = id,
+                        CompleterId = userId
+                    });
+
+                    user.RankPoints += achievement.PointAmount;
+                    await _dbContext.SaveChangesAsync();
+                }
+            }
+        }
+    }
+}
+```
+
+## **Közös Jellemzők**
+- **Idempotens művelet**: Többször is futtatható
+- **Automatikus kiosztás**: Nincs manuális beavatkozás
+- **Pontozás**: Minden teljesítmény adott pontot ér
+
+## **Használati Példák**
+
+### **Kommentelés után**
+```csharp
+// CommentService-ben a komment létrehozása után
+await GrantAchievementIfEligible(userId);
+```
+
+### **Könyv publikálása után**
+```csharp
+// BookService-ben a könyv mentése után
+int bookCount = await _dbContext.Books.CountAsync(b => b.AuthorId == userId);
+await GrantAchievementIfEligible(userId, bookCount);
+```

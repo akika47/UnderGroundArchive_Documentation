@@ -1,0 +1,84 @@
+# JwtSettings Dokumentáció
+
+## **Áttekintés**
+A `JwtSettings` osztály a JWT (JSON Web Token) hitelesítés konfigurációs beállításait tárolja. Ez az osztály általában az alkalmazás konfigurációs fájljából (pl. `appsettings.json`) töltődik be.
+
+---
+
+## **Tulajdonságok**
+
+### **1. `Key` (Kulcs)**
+- **Típus:** `string`
+- **Feladat:** A titkosítási kulcs, amit a JWT token aláírásához használunk.
+- **Fontos:**  
+  - Erős, véletlenszerű kulcsot kell használni (pl. legalább 256 bites)  
+  - Soha ne tároljuk közvetlenül a kódban (mindig konfigurációból vagy titkos tárolóból töltsük be)  
+
+### **2. `Issuer` (Kibocsátó)**
+- **Típus:** `string`
+- **Feladat:** Az a szerver vagy szolgáltatás neve, amely kiadja a tokeneket.
+- **Példa:** `"UnderGroundArchive-Auth"`
+
+### **3. `Audience` (Célközönség)**
+- **Típus:** `string`
+- **Feladat:** Azok a szolgáltatások, amelyek elfogadják ezt a tokent.
+- **Példa:** `"UnderGroundArchive-API"`
+
+## **Használat a JWT hitelesítés beállításakor**
+```csharp
+      var secretKey = Encoding.UTF8.GetBytes("SA5Tq6PMb/6UKyx7IPCe7c1kISP3wnSoyH/mFeZzxoM=");
+      builder.Services.AddAuthentication(options =>
+      {
+      options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+      options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+      })
+          .AddJwtBearer(options =>
+          {
+              options.TokenValidationParameters = new TokenValidationParameters
+              {
+                  ValidateIssuer = true,
+                  ValidateAudience = true,
+                  ValidateLifetime = true,
+                  ValidateIssuerSigningKey = true,
+                  ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                  ValidAudience = builder.Configuration["Jwt:Audience"],
+                  IssuerSigningKey = new SymmetricSecurityKey(secretKey)
+              };
+
+              options.Events = new JwtBearerEvents
+              {
+                  OnChallenge = context =>
+                  {
+                      context.HandleResponse();
+                      context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                      context.Response.ContentType = "application/json";
+                      var result = JsonSerializer.Serialize(new { message = "Token érvénytelen vagy hiányzik." });
+                      return context.Response.WriteAsync(result);
+                  }
+              };
+          }).AddGoogle(googleOptions =>
+          {
+              googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+              googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+              googleOptions.Scope.Add("https://www.googleapis.com/auth/user.phonenumbers.read");
+          });
+
+```
+
+## **Fontos biztonsági megjegyzések**
+✅ **Jó gyakorlat:**  
+- A `Key`-t mindig titkos környezetben tárold (pl. Azure Key Vault, környezeti változók)  
+- Ne használj gyenge kulcsokat (pl. "secret123")  
+
+❌ **Kerüld el:**  
+- A kulcs verziókövetésbe (Git) való felvételét  
+- Ugyanazon kulcs használatát több környezetben (fejlesztés, teszt, éles)  
+
+## **Összefoglaló**
+| **Tulajdonság** | **Leírás** | **Kötelező?** |
+|----------------|-----------|--------------|
+| `Key` | Token aláíráshoz használt titkos kulcs | ✅ Igen |
+| `Issuer` | A token kibocsátójának neve | ✅ Igen |
+| `Audience` | A token célközönsége | ✅ Igen |
+
+Ez a konfiguráció biztosítja a JWT tokenek biztonságos generálását és érvényesítését az alkalmazásban.

@@ -1,0 +1,28 @@
+# RoleManagerService Dokumentáció
+
+## **Áttekintés**
+A `RoleManagerService` statikus osztály, amely felelős az alapvető szerepkörök (User, Admin, Moderator) létrehozásáért az adatbázisban az alkalmazás első indításakor.
+
+## **Fő funkció**
+
+### **Szerepkörök inicializálása (`SeedRolesAsync`)**
+```csharp
+public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
+```
+
+#### **Paraméter**
+| Paraméter | Típus | Leírás |
+|-----------|-------|--------|
+| `serviceProvider` | `IServiceProvider` | Dependency Injection szolgáltató |
+
+#### **Működés**
+1. Lekéri a `RoleManager<IdentityRole>` szolgáltatást
+2. Ellenőrzi és létrehozza a hiányzó szerepköröket:
+   - `User`
+   - `Admin`
+   - `Moderator`
+
+## **Fontos tudnivalók**
+- **Idempotens művelet**: Többször is futtatható, csak hiányzó szerepköröket hozza létre
+- **Kötelező szerepkörök**: Mindig ellenőrzi a három alapvető szerepkört
+- **Statikus osztály**: Nem szükséges példányosítani

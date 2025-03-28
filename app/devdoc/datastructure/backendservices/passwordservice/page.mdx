@@ -1,0 +1,12 @@
+# PasswordService Dokumentáció
+
+## **Áttekintés**
+A `PasswordService` egy egyéni jelszó-ellenőrző szolgáltatás, amely az ASP.NET Core Identity `IPasswordValidator<TUser>` interfészét implementálja. Feladata a felhasználói jelszavak erősségének ellenőrzése a következő szabályok alapján:
+
+## **Jelszókövetelmények**
+| **Szabály**                | **Hibaüzenet (Code)**               | **Leírás**                                  |
+|----------------------------|------------------------------------|--------------------------------------------|
+| Legalább 1 szám           | `PasswordRequiresDigit`           | "A jelszónak legalább egy számot kell tartalmaznia. ('0' - '9')" |
+| Legalább 1 speciális karakter | `PasswordRequiresNonAlphanumeric` | "A jelszónak legalább egy speciális karaktert kell tartalmaznia." |
+| Legalább 1 nagybetű        | `PasswordRequiresUppercase`       | "A jelszónak legalább egy nagybetűt kell tartalmaznia. ('A' - 'Z')" |
+| Minimum 8 karakter hosszú | `PasswordTooShort`                | "A jelszónak legalább 8 karakter hosszúnak kell lennie." |

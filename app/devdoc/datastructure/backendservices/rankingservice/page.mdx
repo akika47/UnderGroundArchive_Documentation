@@ -1,0 +1,51 @@
+# RankingService Dokumentáció
+
+## **Áttekintés**
+A `RankingService` felelős a felhasználói rangpontok kezeléséért, beleértve:
+- Pontok hozzáadását a felhasználói szerepkörtől függően
+- Büntetés kiszabását jelentés esetén (pontlevonás)
+
+## **Fő funkciók**
+
+### **1. Pontok hozzáadása (`AddPointsToUser`)**
+```csharp
+public async Task<bool> AddPointsToUser(string userId, int points, string role)
+```
+
+#### **Paraméterek**
+| Paraméter | Típus | Leírás |
+|-----------|-------|--------|
+| `userId` | `string` | A felhasználó azonosítója |
+| `points` | `int` | Alappontok száma |
+| `role` | `string` | Felhasználó szerepköre (`user`, `author`, `admin`, `moderator`) |
+
+#### **Pontozási logika**
+| Szerepkör | Alap szorzó | Prémium előfizető szorzó |
+|-----------|------------|-------------------------|
+| `user` | 1x | 2x |
+| `author` | 0.5x | 1x |
+| `admin`/`moderator` | Nincs változtatás | Nincs változtatás |
+
+#### **Visszatérési érték**
+- `true`: Sikeres pontozás
+- `false`: Ha a felhasználó nem található
+
+---
+
+### **2. Büntetés kiszabása (`PenalizeUserForReport`)**
+```csharp
+public async Task<bool> PenalizeUserForReport(string userId)
+```
+
+#### **Paraméterek**
+| Paraméter | Típus | Leírás |
+|-----------|-------|--------|
+| `userId` | `string` | A büntetendő felhasználó azonosítója |
+
+#### **Büntetés mértéke**
+- A felhasználó aktuális pontjainak **5%-a** levonásra kerül
+- A pontok soha nem eshetnek 0 alá
+
+#### **Visszatérési érték**
+- `true`: Sikeres büntetés
+- `false`: Ha a felhasználó nem található

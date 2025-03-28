@@ -1,0 +1,24 @@
+# IBookService Dokumentáció
+
+## Áttekintés
+Az `IBookService` interfész definiálja a könyvek kezeléséhez szükséges alapműveleteket, amelyeket a `BookService` osztály implementál.
+
+## Metódusok
+
+### Könyv publikálása
+```csharp
+Task<bool> PublishBookAsync(Books book);
+```
+- **Feladat**: Új könyv mentése az adatbázisba
+- **Paraméter**: `Books` típusú könyvobjektum
+- **Visszatérés**: `Task<bool>` - true értékkel tér vissza sikeres mentés esetén
+
+### Könyvek listázása
+```csharp
+Task<IEnumerable<Books>> GetBooksAsync();
+```
+- **Feladat**: Összes regisztrált könyv lekérése
+- **Visszatérés**: `Task<IEnumerable<Books>>` - könyvek listájával tér vissza
+
+## Implementáció
+Az interfészt a `BookService` osztály valósítja meg, amely az Entity Framework Core-t használja az adatbázis műveletekhez.
