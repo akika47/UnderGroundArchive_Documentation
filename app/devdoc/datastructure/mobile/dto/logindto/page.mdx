@@ -1,0 +1,21 @@
+# LoginDTO Dokumentáció
+
+## **Áttekintés**
+A `LoginDTO` osztály a bejelentkezési folyamat során használt adatátviteli objektum (DTO) a MAUI mobilalkalmazásban. Ez az osztály a felhasználói hitelesítő adatokat tartalmazza, amelyeket a rendszer továbbít a szervernek a bejelentkezési kérés során.
+
+## **Osztály struktúra**
+
+```csharp
+public class LoginDTO
+{
+    public string Login { get; set; }
+    public string Password { get; set; }
+}
+```
+
+### **Tulajdonságok**
+
+| Tulajdonság  | Típus   | Kötelező | Leírás                                                                 |
+|-------------|---------|----------|-----------------------------------------------------------------------|
+| `Login`     | string  | Igen     | A felhasználó azonosítója (lehet felhasználónév, email vagy egyedi azonosító) |
+| `Password`  | string  | Igen     | A felhasználó jelszava (nyers formában, amit a kliens titkosítani fog) |

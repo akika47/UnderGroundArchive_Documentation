@@ -1,0 +1,85 @@
+# UserView XAML Dokumentáció
+
+## **Áttekintés**
+A `UserView` egy felhasználókezelő felületet valósít meg WPF-ben, amely lehetővé teszi a felhasználók listázását és adminisztrálását. A nézet a korábban definiált ResourceDictionary stílusokat használja és a `UserViewModel`-hez kötődik.
+
+## **Struktúra és Főbb Komponensek**
+
+### **1. Ablakkonfiguráció**
+```xml
+<Window ...
+    Title="UserView"
+    Height="450"
+    Width="800"
+    Style="{StaticResource BackgroundStyle}">
+```
+- **Méretek**: 800×450 pixel
+- **Stílus**: `BackgroundStyle` alkalmazva a konzisztens sötét témához
+
+### **2. Fő elrendezés (Grid)**
+```xml
+<Grid>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>  <!-- Gombpanel -->
+        <ColumnDefinition Width="*"/>     <!-- Adattábla -->
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="3*"/>     <!-- Fő gombcsoport -->
+        <RowDefinition Height="*"/>      <!-- Navigációs gombok -->
+    </Grid.RowDefinitions>
+```
+
+### **3. Bal oldali vezérlőpanel**
+#### **Felső gombcsoport (StackPanel)**
+```xml
+<StackPanel Orientation="Vertical" Grid.Column="0">
+    <Button Content="Load Users" Command="{Binding LoadUsersCommand}" Style="{StaticResource ButtonStyle}"/>
+    <Button Content="Mute User" Command="{Binding ChangeMuteStatusCommand}" Style="{StaticResource ButtonStyle}"/>
+    <Button Content="Ban User" Command="{Binding ChangeBanStatusCommand}" Style="{StaticResource ButtonStyle}"/>
+    <Button Content="Update Role" Command="{Binding UpdateUserRoleCommand}" Style="{StaticResource ButtonStyle}"/>
+    <Label Content="Select Role:" Style="{StaticResource UserLabelStyle}"/>
+    <ComboBox ItemsSource="{Binding RoleOptions}" 
+              SelectedItem="{Binding SelectedRole}" 
+              Style="{StaticResource UserComboBoxStyle}"/>
+</StackPanel>
+```
+
+#### **Alsó navigációs gombok**
+```xml
+<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="1">
+    <Button Content="Go To Requests" Command="{Binding GoToRequestsCommand}" 
+            Width="150" Height="40" Margin="5" Style="{StaticResource ButtonStyle}"/>
+    <Button Content="Log Out" Command="{Binding LogOutCommand}" 
+            Width="150" Height="40" Margin="5" Style="{StaticResource ButtonStyle}"/>
+</StackPanel>
+```
+
+### **4. Jobb oldali adattábla (DataGrid)**
+```xml
+<DataGrid ItemsSource="{Binding Users}" 
+          SelectedItem="{Binding SelectedUser}" 
+          Grid.Column="1" 
+          Grid.RowSpan="2" 
+          AutoGenerateColumns="True" 
+          Style="{StaticResource UserDataGridStyle}"/>
+```
+
+## **Parancskötések és Funkcionalitás**
+
+| Gomb/vezérlő           | Parancs kötés                      | Funkció                                    |
+|-------------------------|------------------------------------|-------------------------------------------|
+| "Load Users"           | `{Binding LoadUsersCommand}`      | Frissíti a felhasználók listáját         |
+| "Mute User"            | `{Binding ChangeMuteStatusCommand}`| Némítja/feloldja a felhasználót          |
+| "Ban User"             | `{Binding ChangeBanStatusCommand}` | Kitiltja/visszavonja a kitiltást         |
+| "Update Role"          | `{Binding UpdateUserRoleCommand}`  | Frissíti a felhasználó szerepkörét       |
+| ComboBox               | `{Binding RoleOptions}`           | Elérhető szerepkörök listája             |
+| "Go To Requests"       | `{Binding GoToRequestsCommand}`   | Navigál a kérelmek felületére           |
+| "Log Out"              | `{Binding LogOutCommand}`         | Kijelentkezteti az adminisztrátort      |
+
+## **Stílusok és Erőforrások**
+A nézet a következő előre definiált stílusokat használja:
+- `BackgroundStyle`: Ablak háttér
+- `ButtonStyle`: Gombok megjelenése
+- `UserLabelStyle`: Címkék formázása
+- `UserComboBoxStyle`: Legördülő lista stílusa
+- `UserDataGridStyle`: Adattábla megjelenése

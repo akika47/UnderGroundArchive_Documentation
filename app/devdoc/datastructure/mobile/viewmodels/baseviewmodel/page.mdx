@@ -1,0 +1,24 @@
+# BaseViewModel Dokumentáció
+
+## **Áttekintés**
+A `BaseViewModel` osztály az MVVM (Model-View-ViewModel) minta alapvető implementációját tartalmazza a .NET MAUI mobilalkalmazásban. Ez az osztály szolgál alapul az összes többi ViewModel számára, biztosítva az `INotifyPropertyChanged` interfész standard implementációját.
+
+## **Főbb jellemzők**
+
+### **1. INotifyPropertyChanged implementáció**
+```csharp
+public event PropertyChangedEventHandler PropertyChanged;
+```
+- **Cél**: Értesíti a felületet (View) a ViewModel tulajdonságainak változásáról
+- **Használat**: Minden olyan ViewModel, ami örököl ebből az osztályból, automatikusan megkapja ezt a funkcionalitást
+
+### **2. OnPropertyChanged metódus**
+```csharp
+protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+{
+    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}
+```
+- **Paraméter**: 
+  - `propertyName`: A megváltozott tulajdonság neve (automatikusan kitöltődik a hívó tag nevével)
+- **CallerMemberName attribútum**: Megkönnyíti a használatot, nem kell kézzel megadni a tulajdonság nevét

@@ -1,0 +1,54 @@
+# BooksView XAML Dokumentáció
+
+## **Áttekintés**
+A `BooksView` egy ContentPage, ami a könyvek listáját jeleníti meg a .NET MAUI mobilalkalmazásban. Az oldal egy CollectionView segítségével megjeleníti a könyveket, amelyek adatait a hozzá tartozó `BooksViewModel` biztosítja.
+
+## **Főbb komponensek**
+
+### **1. Alapstruktúra**
+```xml
+<ContentPage ...>
+    <ScrollView>
+        <StackLayout Padding="10">
+            <!-- Tartalom -->
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
+```
+- **ScrollView**: Biztosítja a görgethetőséget hosszú listák esetén
+- **StackLayout**: A tartalom vertikális elrendezését biztosítja
+
+### **2. Fejléc**
+```xml
+<Label Text="Könyvek listája" FontSize="Large" HorizontalOptions="Center"/>
+```
+- Központosan elhelyezett, nagy betűméretű cím
+
+### **3. Könyvlista (CollectionView)**
+```xml
+<CollectionView ItemsSource="{Binding Books}">
+    <CollectionView.ItemTemplate>
+        <DataTemplate>
+            <!-- Könyv megjelenítése -->
+        </DataTemplate>
+    </CollectionView.ItemTemplate>
+</CollectionView>
+```
+- **Adatkötés**: `Books` property-hez kötve a ViewModel-ből
+- **ItemTemplate**: Meghatározza, hogyan jelenjen meg egy könyv
+
+### **4. Könyv megjelenítése (DataTemplate)**
+```xml
+<Frame BorderColor="Black" Padding="10" Margin="5" CornerRadius="10">
+    <VerticalStackLayout>
+        <Label Text="{Binding BookName}" FontSize="Medium" FontAttributes="Bold"/>
+        <Label Text="{Binding BookDescription}" FontSize="Small"/>
+        <Label Text="{Binding AverageRating, StringFormat='Értékelés: {0:F1}'}" 
+               FontSize="Small" TextColor="Green"/>
+    </VerticalStackLayout>
+</Frame>
+```
+- **Frame**: Minden könyv keretbe van helyezve, lekerekített sarkokkal
+- **BookName**: Félkövér, közepes méretű betűkkel
+- **BookDescription**: Kis betűméretű leírás
+- **AverageRating**: Zöld színű, 1 tizedes pontosságú értékelés

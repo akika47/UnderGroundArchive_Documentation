@@ -1,0 +1,25 @@
+# ModeratorViewModel Dokumentáció
+
+## **Áttekintés**
+A `ModeratorViewModel` osztály a moderátori felület üzleti logikáját valósítja meg az MVVM minta szerint. Ez a ViewModel felelős a jelentések kezeléséért, moderációs műveletekért és a felhasználói munkamenet kezeléséért.
+
+## **Főbb komponensek**
+
+### **1. Függőségek**
+- `ApiService`: API kommunikáció kezelése
+- `ObservableCollection<ReportModel>`: Dinamikusan frissülő jelentéslista
+- `INotifyPropertyChanged`: Property változások jelzése a View-nak
+
+### **2. Főbb tulajdonságok**
+| Név               | Típus                          | Leírás                                                                 |
+|-------------------|--------------------------------|-----------------------------------------------------------------------|
+| `Reports`         | `ObservableCollection<ReportModel>` | Függőben lévő jelentések listája (automatikus UI frissítéssel)       |
+| `SelectedReport`  | `ReportModel`                  | A kiválasztott jelentés (kétirányú kötéshez)                         |
+
+### **3. Parancsok**
+| Parancs                 | Metódus               | Leírás                                                                 |
+|-------------------------|-----------------------|-----------------------------------------------------------------------|
+| `LoadReportsCommand`    | `LoadReportsAsync()`  | Betölti a függőben lévő jelentéseket                                 |
+| `AcceptReportCommand`   | `AcceptReportAsync()` | Elfogadja a kiválasztott jelentést                                   |
+| `DenyReportCommand`     | `DenyReportAsync()`   | Elutasítja a kiválasztott jelentést                                  |
+| `LogOutCommand`        | `LogOutAsync()`       | Kijelentkezteti a moderátort                                        |

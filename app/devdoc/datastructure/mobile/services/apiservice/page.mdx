@@ -1,0 +1,83 @@
+# ApiService Dokumentáció
+
+## **Áttekintés**
+Az `ApiService` osztály a MAUI mobilalkalmazás és a backend API közötti kommunikációért felelős. Ez a szolgáltatás kezeli a könyvek lekérését és a felhasználói bejelentkezést.
+
+## **Főbb komponensek**
+
+### **1. Konstruktor és inicializálás**
+```csharp
+public ApiService()
+{
+    _httpClient = new HttpClient();
+    _httpClient.BaseAddress = new Uri("https://2cdc-94-44-112-18.ngrok-free.app");
+    
+    // Statikus JWT token (csak teszteléshez)
+    string jwtToken = "YOUR_JWT_TOKEN_HERE";
+    _httpClient.DefaultRequestHeaders.Authorization = 
+        new AuthenticationHeaderValue("Bearer", jwtToken);
+}
+```
+- **HttpClient**: Az API hívások alapja
+- **BaseAddress**: Az API szerver címe (ngrok-al biztosított)
+- **JWT token**: Statikus token tesztelési célból (éles környezetben dinamikusan kell beállítani)
+
+### **2. Könyvek lekérése**
+```csharp
+public async Task<List<BookDTO>> GetBooksAsync()
+{
+    try
+    {
+        HttpResponseMessage response = await _httpClient.GetAsync("api/User/books");
+        response.EnsureSuccessStatusCode();
+        string json = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<List<BookDTO>>(json, 
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+    catch (Exception ex)
+    {
+        Trace.WriteLine($"Hiba történt: {ex.Message}");
+        return new List<BookDTO>();
+    }
+}
+```
+- **Endpoint**: `GET api/User/books`
+- **Hibakezelés**: Hibák naplózása a Trace segítségével
+- **JSON deszerializálás**: Kis-nagybetű érzéketlen feldolgozás
+
+### **3. Bejelentkezés**
+```csharp
+public async Task<string> LoginAsync(string username, string password)
+{
+    var loginDto = new { Login = username, Password = password };
+    var json = JsonSerializer.Serialize(loginDto);
+    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+    HttpResponseMessage response = await _httpClient.PostAsync("api/Account/login", content);
+    var responseContent = await response.Content.ReadAsStringAsync();
+
+    Console.WriteLine($"Server Response: {responseContent}");
+
+    if (response.IsSuccessStatusCode)
+    {
+        try
+        {
+            var jsonResponse = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
+            if (jsonResponse.ContainsKey("jwt"))
+                return jsonResponse["jwt"];
+            if (jsonResponse.ContainsKey("token"))
+                return jsonResponse["token"];
+        }
+        catch (JsonException)
+        {
+            return responseContent; // Ha sima string a válasz
+        }
+    }
+    return null;
+}
+```
+- **Endpoint**: `POST api/Account/login`
+- **Request body**: `{ Login: string, Password: string }`
+- **Token kinyerése**: Támogatja a "jwt" és "token" kulcsokat, valamint sima string választ
+- **Debug**: Konzolra írja a szerver válaszát
+

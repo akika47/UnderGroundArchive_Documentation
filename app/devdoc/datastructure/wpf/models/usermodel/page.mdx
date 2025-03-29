@@ -1,0 +1,22 @@
+# **UserModel Dokumentáció**
+
+## **Áttekintés**
+A `UserModel` osztály a felhasználói fiókok teljes körű reprezentációját valósítja meg a WPF alkalmazásban. Ez a modell a felhasználó alapvető adatait, státuszát és jogosultsági szintjét tárolja.
+
+## **Tulajdonságok**
+
+| Tulajdonság          | Típus       | Leírás                                                                 |
+|----------------------|-------------|-----------------------------------------------------------------------|
+| `Id`                 | string      | A felhasználó egyedi azonosítója (GUID vagy egyedi sztring)          |
+| `UserName`           | string      | A felhasználó bejelentkezési neve                                    |
+| `Email`             | string      | A felhasználó email címe (validált formátumú)                       |
+| `JoinDate`          | DateTime    | A regisztráció dátuma                                               |
+| `BirthDate`         | DateTime?   | A felhasználó születési dátuma (opcionális)                        |
+| `Country`           | string?     | A felhasználó országa (opcionális)                                 |
+| `RankPoints`        | int         | A felhasználó rangpontjai (pl. aktivitás alapján)                  |
+| `Balance`           | decimal     | A felhasználó virtuális egyenlege (valuta egységben)               |
+| `IsMuted`           | bool        | Megmutatja, hogy a felhasználó némítva van-e                       |
+| `IsBanned`          | bool        | Megmutatja, hogy a felhasználó kitiltva van-e                      |
+| `RoleName`          | string      | A felhasználó jogosultsági szintje (pl. "Admin", "User")           |
+| `RankName`          | string      | A felhasználó rangja (pl. "Arany", "Ezüst")                        |
+| `SubscriptionName`  | string      | Az előfizetés típusa (pl. "Prémium", "Alap")                       |

@@ -1,0 +1,29 @@
+# UserViewModel Dokumentáció
+
+## **Áttekintés**
+A `UserViewModel` osztály a felhasználókezelési felület üzleti logikáját valósítja meg az MVVM (Model-View-ViewModel) minta szerint. Ez a ViewModel felelős a felhasználói lista megjelenítéséért, felhasználói státusz módosításáért és a jogosultságok kezeléséért.
+
+## **Főbb komponensek**
+
+### **1. Függőségek**
+- `ApiService`: API kommunikáció kezelése
+- `ObservableCollection<UserModel>`: Dinamikusan frissülő felhasználólista
+- `INotifyPropertyChanged`: Property változások jelzése a View-nak
+
+### **2. Főbb tulajdonságok**
+| Név               | Típus                          | Leírás                                                                 |
+|-------------------|--------------------------------|-----------------------------------------------------------------------|
+| `Users`           | `ObservableCollection<UserModel>` | Felhasználók listája (automatikus UI frissítéssel)                  |
+| `SelectedUser`    | `UserModel`                    | A kiválasztott felhasználó (kétirányú kötéshez)                     |
+| `RoleOptions`     | `List<string>`                 | Elérhető jogosultsági szintek (User, Author, Critic, Moderator, Admin) |
+| `SelectedRole`    | `string`                       | A kiválasztott jogosultsági szint                                    |
+
+### **3. Parancsok**
+| Parancs                     | Metódus                   | Leírás                                                                 |
+|-----------------------------|---------------------------|-----------------------------------------------------------------------|
+| `LoadUsersCommand`          | `LoadUsersAsync()`        | Betölti a felhasználók listáját                                     |
+| `ChangeMuteStatusCommand`   | `ChangeMuteStatusAsync()` | Némítja/feloldja a kiválasztott felhasználót                       |
+| `ChangeBanStatusCommand`    | `ChangeBanStatusAsync()`  | Kitiltja/visszavonja a kiválasztott felhasználó kitiltását         |
+| `UpdateUserRoleCommand`     | `UpdateUserRoleAsync()`   | Frissíti a felhasználó jogosultsági szintjét                       |
+| `GoToRequestsCommand`       | `GoToRequests()`          | Átirányít a kérelmek kezelésére                                    |
+| `LogOutCommand`             | `LogOutAsync()`           | Kijelentkezteti az adminisztrátort                                |

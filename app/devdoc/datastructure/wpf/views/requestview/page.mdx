@@ -1,0 +1,68 @@
+# RequestView XAML Dokumentáció
+
+## **Áttekintés**
+A `RequestView` a kérelmek kezelésére szolgáló adminisztrációs felületet valósítja meg WPF-ben. A nézet a korábban definiált ResourceDictionary stílusokat használja és a `RequestViewModel`-hez kötődik adatkötéssel és parancskezeléssel.
+
+## **Struktúra és Főbb Komponensek**
+
+### **1. Ablakkonfiguráció**
+```xml
+<Window ...
+    Title="RequestView"
+    Height="450"
+    Width="800"
+    Style="{StaticResource BackgroundStyle}">
+```
+- **Méretek**: 800×450 pixel
+- **Stílus**: `BackgroundStyle` alkalmazva a konzisztens sötét témához
+
+### **2. Fő elrendezés (Grid)**
+```xml
+<Grid>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>  <!-- Gombok sora -->
+        <RowDefinition Height="*"/>     <!-- Adattábla -->
+    </Grid.RowDefinitions>
+```
+
+### **3. Gombpanel (DockPanel)**
+```xml
+<DockPanel Grid.Row="0">
+    <!-- Gombok -->
+</DockPanel>
+```
+- **Gombok elhelyezése**: Horizontális elrendezés DockPanel-lel
+- **Gombok**:
+  - `Load Pending Requests`: Frissíti a kérelmek listáját
+  - `Accept Request`: Elfogadja a kiválasztott kérelmet
+  - `Deny Request`: Elutasítja a kiválasztott kérelmet
+  - `Go Back`: Visszanavigál a felhasználókezelő felületre
+
+### **4. Adattábla (DataGrid)**
+```xml
+<DataGrid Grid.Row="1"
+          ItemsSource="{Binding Requests}"
+          SelectedItem="{Binding SelectedRequest}"
+          Style="{StaticResource UserDataGridStyle}"
+          AutoGenerateColumns="True"/>
+```
+- **Adatkötések**:
+  - `Requests`: A megjelenítendő kérelmek listája
+  - `SelectedRequest`: A kiválasztott kérelem
+- **Stílus**: `UserDataGridStyle` alkalmazva
+- **Oszlopok**: Automatikus generálás (`AutoGenerateColumns="True"`)
+
+## **Parancskötések és Funkcionalitás**
+
+| Gomb szövege            | Parancs kötés                  | Funkció                                    |
+|-------------------------|--------------------------------|-------------------------------------------|
+| "Load Pending Requests" | `{Binding LoadRequestsCommand}`| Betölti a függőben lévő kérelmeket       |
+| "Accept Request"        | `{Binding AcceptRequestCommand}`| Elfogadja a kiválasztott kérelmet       |
+| "Deny Request"          | `{Binding DenyRequestCommand}` | Elutasítja a kiválasztott kérelmet      |
+| "Go Back"               | `{Binding GoToUsersCommand}`   | Visszalép a felhasználókezelő nézetre  |
+
+## **Stílusok és Erőforrások**
+A nézet a következő előre definiált stílusokat használja:
+- `BackgroundStyle`: Ablak háttérstílusa
+- `ButtonStyle`: Gombok megjelenése
+- `UserDataGridStyle`: Adattábla formázása

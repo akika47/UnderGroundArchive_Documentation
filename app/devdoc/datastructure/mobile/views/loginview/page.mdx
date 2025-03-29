@@ -1,0 +1,68 @@
+# LoginView XAML Dokumentáció
+
+## **Áttekintés**
+A `LoginView` a bejelentkezési felületet valósítja meg a .NET MAUI mobilalkalmazásban. Az oldal egy egyszerű, de funkcionális bejelentkezési űrlapot tartalmaz, amely integrálódik a hozzá tartozó `LoginViewModel`-lel.
+
+## **Főbb komponensek**
+
+### **1. Elrendezés (VerticalStackLayout)**
+```xml
+<VerticalStackLayout Padding="20" Spacing="15">
+```
+- **Padding**: 20 egység belső margó
+- **Spacing**: 15 egység térköz az elemek között
+
+### **2. Címke (Label)**
+```xml
+<Label Text="Bejelentkezés" 
+       FontSize="24" 
+       HorizontalOptions="Center"
+       FontAttributes="Bold"/>
+```
+- Központosan elhelyezett, félkövér, 24-es betűméretű cím
+
+### **3. Bemeneti mezők**
+
+#### **Felhasználónév mező**
+```xml
+<Entry Placeholder="Felhasználónév"
+       Text="{Binding Username}"
+       Keyboard="Text"/>
+```
+- Kétirányú adatkötés a ViewModel `Username` property-jéhez
+- Szöveges billentyűzet megjelenítése
+
+#### **Jelszó mező**
+```xml
+<Entry Placeholder="Jelszó"
+       Text="{Binding Password}"
+       IsPassword="True"/>
+```
+- Kétirányú adatkötés a ViewModel `Password` property-jéhez
+- Jelszó mezőként viselkedik (pontokkal jeleníti meg a karaktereket)
+
+### **4. Bejelentkezés gomb**
+```xml
+<Button Text="Bejelentkezés"
+        Command="{Binding LoginCommand}"
+        BackgroundColor="#007BFF"
+        TextColor="White"
+        CornerRadius="10"
+        Padding="10"/>
+```
+- Parancskötés a ViewModel `LoginCommand`-jához
+- Stílusbeállítások:
+  - Kék háttér (#007BFF)
+  - Fehér szöveg
+  - 10 egység lekerekített sarkok
+  - 10 egység belső margó
+
+### **5. Hibaüzenet**
+```xml
+<Label Text="{Binding ErrorMessage}" 
+       TextColor="Red" 
+       HorizontalOptions="Center"
+       IsVisible="{Binding HasError}"/>
+```
+- Piros színű hibaüzenet
+- Csak akkor látható, ha a ViewModel `HasError` property-je igaz

@@ -1,0 +1,106 @@
+# ResourceDictionary Dokumentáció
+
+## **Áttekintés**
+Ez a XAML ResourceDictionary egy sötét témájú WPF felület stílusait határozza meg, amely egységes megjelenést biztosít az alkalmazás számára. A stílusok a következő vezérlőkre vonatkoznak:
+
+## **Stílusok Listája**
+
+### **1. Háttér stílus (Window)**
+```xaml
+<Style TargetType="Window" x:Key="BackgroundStyle">
+    <Setter Property="Background" Value="#1E1E1E"/>
+    <Setter Property="Foreground" Value="White"/>
+    <Setter Property="FontFamily" Value="Segoe UI"/>
+</Style>
+```
+- **Felhasználás**: Alkalmazás szintű háttér és alapértelmezett szövegstílus
+- **Tulajdonságok**:
+  - Sötét szürke háttér (#1E1E1E)
+  - Fehér szövegszín
+  - Segoe UI betűtípus
+
+### **2. Szöveg stílus (TextBlock)**
+```xaml
+<Style TargetType="TextBlock" x:Key="LabelStyle">
+    <Setter Property="FontSize" Value="14"/>
+    <Setter Property="Foreground" Value="White"/>
+</Style>
+```
+- **Felhasználás**: Címkék, információs szövegek
+- **Jellemzők**:
+  - 14px méretű betű
+  - Fehér szín
+
+### **3. Szövegmező stílus (TextBox)**
+```xaml
+<Style TargetType="TextBox" x:Key="TextBoxStyle">
+    <Setter Property="Width" Value="200"/>
+    <Setter Property="Background" Value="#2D2D30"/>
+    <Setter Property="BorderBrush" Value="#3E3E42"/>
+</Style>
+```
+- **Kiemelt tulajdonságok**:
+  - Rögzített 200px szélesség
+  - Sötét szürke háttér (#2D2D30)
+  - Kontrasztos keret (#3E3E42)
+
+### **4. Jelszómező stílus (PasswordBox)**
+```xaml
+<Style TargetType="PasswordBox" x:Key="PasswordStyle">
+    <Setter Property="CaretBrush" Value="White"/>
+</Style>
+```
+- **Különlegesség**:
+  - Fehér kurzor a sötét háttéren
+  - Egyéb tulajdonságok megegyeznek a TextBox stílusával
+
+### **5. Gomb stílus (Button)**
+```xaml
+<Style TargetType="Button" x:Key="ButtonStyle">
+    <Setter Property="Background" Value="#007ACC"/>
+    <Setter Property="Template">
+        <ControlTemplate>
+            <Border CornerRadius="5">
+                <ContentPresenter/>
+            </Border>
+        </ControlTemplate>
+    </Setter>
+</Style>
+```
+- **Design elemek**:
+  - Kék háttér (#007ACC)
+  - 5px-es lekerekített sarkok
+  - Félkövér fehér szöveg
+  - Kézmozdulat mutató (Cursor="Hand")
+
+### **6. Legördülő lista stílus (ComboBox)**
+```xaml
+<Style TargetType="ComboBox" x:Key="UserComboBoxStyle">
+    <Setter Property="Foreground" Value="Black"/>
+</Style>
+```
+- **Megjegyzés**: A legördülő elemek feketével jelennek meg
+
+### **7. Adattábla stílus (DataGrid)**
+```xaml
+<Style TargetType="DataGrid" x:Key="UserDataGridStyle">
+    <Setter Property="AlternatingRowBackground" Value="#1E1E1E"/>
+    <Setter Property="RowBackground" Value="#2D2D30"/>
+</Style>
+```
+- **Sorkiemelés**:
+  - Váltakozó sorkiemelés sötét szürke árnyalatokkal
+  - Sötét keret és háttér
+
+## **Használati példa**
+```xaml
+<Window.Resources>
+    <ResourceDictionary Source="Styles.xaml"/>
+</Window.Resources>
+
+<Grid>
+    <TextBlock Style="{StaticResource LabelStyle}" Text="Felhasználónév"/>
+    <TextBox Style="{StaticResource TextBoxStyle}"/>
+    <Button Style="{StaticResource ButtonStyle}" Content="Küldés"/>
+</Grid>
+```

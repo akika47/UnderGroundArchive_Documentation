@@ -1,0 +1,26 @@
+# LoginViewModel Dokumentáció
+
+## **Áttekintés**
+A `LoginViewModel` osztály a bejelentkezési folyamat üzleti logikáját valósítja meg a .NET MAUI mobilalkalmazásban. Az MVVM mintát követve kezeli a felhasználói hitelesítést és a sikeres bejelentkezés utáni állapotot.
+
+## **Főbb komponensek**
+
+### **1. Tulajdonságok**
+| Név          | Típus   | Leírás                                                                 |
+|--------------|---------|-----------------------------------------------------------------------|
+| `Username`  | string  | A felhasználó által megadott bejelentkezési azonosító                |
+| `Password`  | string  | A felhasználó jelszava                                               |
+
+### **2. Parancsok**
+| Parancs          | Metódus           | Leírás                                                                 |
+|-----------------|-------------------|-----------------------------------------------------------------------|
+| `LoginCommand` | `LoginAsync()`    | Kezeli a bejelentkezési folyamatot                                   |
+
+### **3. Konstruktor**
+```csharp
+public LoginViewModel()
+{
+    LoginCommand = new Command(async () => await LoginAsync());
+}
+```
+- **Parancs inicializálása**: Létrehozza a bejelentkezési parancsot

@@ -1,0 +1,16 @@
+# RequestModel Dokumentáció
+
+## **Áttekintés**
+A `RequestModel` osztály egy kéréskezelési rendszer alapmodelljét reprezentálja, amely lehetővé teszi különböző típusú kérelmek (pl. hozzáférési kérelmek, módosítási kérelmek) strukturált kezelését a WPF alkalmazásban.
+
+## **Tulajdonságok**
+
+| Tulajdonság          | Típus      | Leírás                                                                 |
+|----------------------|------------|-----------------------------------------------------------------------|
+| `RequestId`          | int        | A kérés egyedi azonosítója (automatikusan generált)                  |
+| `RequesterId`        | string     | A kérelmező felhasználó azonosítója                                  |
+| `RequestMessage`     | string     | A kérés részletes leírása                                            |
+| `RequestDate`        | DateTime   | A kérés létrehozásának időpontja                                     |
+| `RequestType`        | int        | A kérés típusának azonosítója ( 1 = Author, 2 = Critic )   |
+| `IsApproved`         | bool       | A kérés jóváhagyási állapota                                         |
+| `IsHandled`         | bool       | A kérés kezelésének állapota (feldolgozott/nem feldolgozott)        |

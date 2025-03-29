@@ -1,0 +1,77 @@
+# LoginView XAML Dokumentáció
+
+## **Áttekintés**
+A `LoginView` a bejelentkezési felületet valósítja meg WPF-ben, amely a korábban definiált ResourceDictionary stílusokat használja. A nézet a `LoginViewModel`-hez kötődik adatkötéssel és parancskezeléssel.
+
+## **Főbb komponensek**
+
+### **1. Ablaktulajdonságok**
+```xml
+<Window ...
+    Title="LoginView" 
+    Height="450" 
+    Width="800"
+    Style="{StaticResource BackgroundStyle}">
+```
+- **Méretek**: 800x450 pixel
+- **Stílus**: A `BackgroundStyle`-t alkalmazza a korábban definiált sötét témához
+
+### **2. Fő elrendezés**
+```xml
+<Grid>
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+        <!-- Tartalom -->
+    </StackPanel>
+</Grid>
+```
+- Középre igazított `StackPanel` a tartalomhoz
+- Egyszerű elrendezés `Grid` és `StackPanel` kombinációval
+
+### **3. Beviteli mezők**
+
+#### **Felhasználónév mező**
+```xml
+<TextBlock Text="Username" Style="{StaticResource LabelStyle}"/>
+<TextBox Text="{Binding Username, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}"/>
+```
+- Címke: `LabelStyle` alkalmazása
+- Bemenet: Kétirányú adatkötés a ViewModel `Username` property-jéhez
+
+#### **Jelszó mező**
+```xml
+<TextBlock Text="Password" Style="{StaticResource LabelStyle}"/>
+<PasswordBox helpers:PasswordBoxHelper.Password="{Binding Password, Mode=TwoWay}" 
+             Style="{StaticResource PasswordStyle}"/>
+```
+- Speciális `PasswordBoxHelper` használata biztonságos jelszókezeléshez
+- Kétirányú kötés a ViewModel `Password` property-jéhez
+
+### **4. Bejelentkezés gomb**
+```xml
+<Button Content="Login" 
+        Command="{Binding LoginCommand}" 
+        Style="{StaticResource ButtonStyle}"/>
+```
+- A `LoginCommand`-hoz kötve a ViewModel-ben
+- `ButtonStyle` alkalmazása a konzisztens megjelenésért
+
+### **5. Eseménykezelés**
+```xml
+KeyDown="Enter_KeyDown"
+```
+- Enter billentyű lenyomására is aktiválódik a bejelentkezés
+
+## **Stílusok és erőforrások**
+A nézet a következő előre definiált stílusokat használja:
+- `BackgroundStyle`: Ablak háttér és alapstílus
+- `LabelStyle`: Szöveges címkék formázása
+- `TextBoxStyle`: Szövegbeviteli mezők megjelenése
+- `PasswordStyle`: Jelszómező stílusa
+- `ButtonStyle`: Gombok megjelenése
+
+## **Adatkötés és MVVM minta**
+| UI Elem           | ViewModel Property/Command  | Kötés típusa       |
+|-------------------|-----------------------------|--------------------|
+| TextBox           | Username                    | TwoWay             |
+| PasswordBox       | Password                    | TwoWay (segédosztályon keresztül) |
+| Button            | LoginCommand                | Command            |

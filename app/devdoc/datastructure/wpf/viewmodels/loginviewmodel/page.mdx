@@ -1,0 +1,53 @@
+# LoginViewModel Dokumentáció
+
+## **Áttekintés**
+A `LoginViewModel` osztály a bejelentkezési folyamat logikáját valósítja meg az MVVM (Model-View-ViewModel) minta szerint. Ez a ViewModel felelős a felhasználói hitelesítésért és a jogosultság alapú átirányításért.
+
+## **Főbb komponensek**
+
+### **1. Függőségek**
+- `ApiService`: Kezeli a backend API-val való kommunikációt
+- `RelayCommand`: A GalaSoft.MvvmLight könyvtár parancsimplementációja
+- `INotifyPropertyChanged`: Értesíti a View-t a tulajdonságok változásáról
+
+### **2. Tulajdonságok**
+| Név            | Típus       | Leírás                                                                 |
+|----------------|-------------|-----------------------------------------------------------------------|
+| `Username`     | string      | A felhasználó által megadott bejelentkezési név (kötött property)    |
+| `Password`     | string      | A felhasználó jelszava (kötött property)                             |
+| `LoginCommand` | ICommand    | A bejelentkezési gombhoz kötött parancs                              |
+
+## **Működési logika**
+
+### **Bejelentkezési folyamat**
+```csharp
+private async Task LoginAsync()
+{
+    // 1. API hívás a hitelesítéshez
+    var (isSuccess, token, role) = await _apiService.LoginAsync(Username, Password);
+    
+    // 2. Sikeres válasz esetén
+    if (isSuccess && !string.IsNullOrEmpty(token))
+    {
+        _apiService.SetToken(token); // Token tárolása
+        
+        // 3. Jogosultság alapú átirányítás
+        switch(role)
+        {
+            case "Admin":
+                // Admin felület betöltése
+                break;
+            case "Moderator":
+                // Moderátor felület betöltése
+                break;
+            default:
+                // Nincs jogosultság
+                break;
+        }
+    }
+    else
+    {
+        // Hibakezelés
+    }
+}
+```

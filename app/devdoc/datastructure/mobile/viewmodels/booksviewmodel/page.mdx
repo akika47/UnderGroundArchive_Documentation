@@ -1,0 +1,54 @@
+# BooksViewModel Dokumentáció
+
+## **Áttekintés**
+A `BooksViewModel` osztály a könyvek listájának megjelenítéséért és kezeléséért felelős a MAUI mobilalkalmazásban. Az MVVM mintát követve valósítja meg a könyvek betöltését és a navigációs logikát.
+
+## **Főbb komponensek**
+
+### **1. Függőségek**
+- `ApiService`: Kezeli a könyvek API-ról történő lekérését
+- `ObservableCollection<BookDTO>`: Dinamikusan frissülő könyvlista
+- `INotifyPropertyChanged`: Értesíti a nézetet a tulajdonságváltozásokról
+
+### **2. Kulcsfontosságú tulajdonságok**
+| Név                     | Típus                          | Leírás                                                                 |
+|-------------------------|--------------------------------|-----------------------------------------------------------------------|
+| `Books`                | `ObservableCollection<BookDTO>`| A megjelenítendő könyvek listája (automatikus UI frissítéssel)       |
+| `NavigateToHomeCommand`| `ICommand`                    | A főoldalra navigálás parancsa                                       |
+
+### **3. Konstruktor**
+```csharp
+public BooksViewModel(ApiService apiService)
+{
+    _apiService = apiService;
+    LoadBooks();
+    NavigateToHomeCommand = new Command(async () => 
+    {
+        await Shell.Current.GoToAsync(nameof(HomeView));
+    });
+}
+```
+- **Dependency Injection**: Az `ApiService` injektálása
+- **Könyvek betöltése**: Azonnali adatbetöltés a konstruktorban
+- **Navigációs parancs**: Létrehoz egy parancsot a főoldalra való navigáláshoz
+
+## **Főbb metódusok**
+
+### **1. Könyvek betöltése**
+```csharp
+private async void LoadBooks()
+{
+    var books = await _apiService.GetBooksAsync();
+    if (books != null)
+    {
+        Books.Clear();
+        foreach (var book in books)
+        {
+            Books.Add(book);
+        }
+    }
+}
+```
+- **API hívás**: Az `ApiService` segítségével lekéri a könyvek listáját
+- **Lista frissítés**: Törli a régi tartalmat és feltölti az új könyvekkel
+- **Hibakezelés**: Ellenőrzi, hogy a válasz nem-e null

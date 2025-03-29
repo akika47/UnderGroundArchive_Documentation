@@ -1,0 +1,55 @@
+# PasswordBoxHelper Dokumentáció
+
+Ez a segédosztály (`PasswordBoxHelper`) a WPF `PasswordBox` vezérlőjét egészíti ki, lehetővé téve a jelszó kétirányú adatkötését (`Binding`) a MVVM (Model-View-ViewModel) mintában.  
+
+## **Probléma, amit megold**  
+A standard WPF `PasswordBox` nem támogatja közvetlenül az adatkötést a `Password` tulajdonságon, mivel az nem egy `DependencyProperty`. Ez problémát okoz, ha MVVM keretrendszert használunk, ahol a jelszót a ViewModel-ben szeretnénk kezelni.  
+
+## **Megoldás: Attached Property**  
+Az osztály egy **attached property-t** (`PasswordProperty`) definiál, ami lehetővé teszi a jelszó kötését a `PasswordBox`-hoz.  
+
+---
+
+## **Funkciók**  
+
+### **1. Jelszó kötése (Binding)**  
+- A `PasswordProperty` lehetővé teszi, hogy a `PasswordBox.Password` értékét kössük egy ViewModel property-hez.  
+- **Példa használat XAML-ben**:  
+  ```xml
+  <PasswordBox helpers:PasswordBoxHelper.Password="{Binding UserPassword, Mode=TwoWay}" />
+  ```
+  (ahol `helpers` a névtér aliasa)  
+
+### **2. Kétirányú szinkronizáció**  
+- Ha a `PasswordBox` jelszava változik (`PasswordChanged` esemény), a helper frissíti az attached property-t.  
+- Ha az attached property változik (ViewModel oldalról), a helper frissíti a `PasswordBox` tartalmát.  
+
+### **3. Végtelen ciklus elkerülése**  
+- A `OnPasswordPropertyChanged` és `PasswordBox_PasswordChanged` metódusok biztosítják, hogy ne legyen végtelen frissítési ciklus, ha a jelszó nem változott.  
+
+---
+
+## **Fontos metódusok**  
+
+| **Metódus**                     | **Leírás**                                                                 |
+|---------------------------------|---------------------------------------------------------------------------|
+| `GetPassword`                   | Lekéri a jelenlegi jelszót az attached property-ből.                     |
+| `SetPassword`                   | Beállítja a jelszót az attached property-n.                              |
+| `OnPasswordPropertyChanged`     | Kezeli, ha a kötött jelszó változik (ViewModel → UI).                    |
+| `PasswordBox_PasswordChanged`   | Kezeli, ha a felhasználó módosítja a jelszót (UI → ViewModel).           |
+
+---
+
+### **View (XAML)**  
+```xml
+<Window xmlns:helpers="clr-namespace:UnderGroundArchive_WPF.Helpers">
+    <PasswordBox helpers:PasswordBoxHelper.Password="{Binding UserPassword, Mode=TwoWay}" />
+</Window>
+```
+
+---
+
+## **Miért hasznos?**  
+- **Biztonság**: A jelszó nem tárolódik a XAML-ban vagy a vezérlő tulajdonságaiban.  
+- **MVVM kompatibilitás**: Lehetővé teszi a tiszta ViewModel használatot anélkül, hogy kódot kellene írni a háttérben.  
+- **Karbantarthatóság**: A jelszókezelés központosítva van egy helper osztályban.  

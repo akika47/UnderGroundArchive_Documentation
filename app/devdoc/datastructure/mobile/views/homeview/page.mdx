@@ -1,0 +1,27 @@
+# HomeView XAML Dokumentáció
+
+## **Áttekintés**
+A `HomeView` a .NET MAUI mobilalkalmazás kezdőképernyőjét reprezentáló egyszerű ContentPage. Jelenleg egy üdvözlő szöveget jelenít meg középre igazítva.
+
+## **Struktúra és komponensek**
+
+### **1. Alapstruktúra**
+```xml
+<ContentPage ...>
+    <VerticalStackLayout>
+        <!-- Tartalom -->
+    </VerticalStackLayout>
+</ContentPage>
+```
+- **ContentPage**: Az alapvető MAUI oldaltípus
+- **VerticalStackLayout**: A tartalmak vertikális elrendezését biztosítja
+
+### **2. Üdvözlő szöveg**
+```xml
+<Label 
+    Text="Welcome to the Homepage"
+    VerticalOptions="Center" 
+    HorizontalOptions="Center" />
+```
+- **Text**: "Welcome to the Homepage" üzenet
+- **VerticalOptions/HorizontalOptions**: Középre igazítás mindkét tengely mentén

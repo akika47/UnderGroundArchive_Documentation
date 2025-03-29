@@ -1,0 +1,16 @@
+# ReportModel Dokumentáció
+
+## **Áttekintés**
+A `ReportModel` osztály egy jelentéskezelési rendszer alapmodelljét reprezentálja, amely lehetővé teszi a felhasználói jelentések (pl. visszaélés, problémák bejelentése) strukturált tárolását és kezelését.
+
+## **Tulajdonságok**
+
+| Tulajdonság          | Típus      | Kötelező | Alapérték      | Leírás                                                                 |
+|----------------------|------------|----------|----------------|-----------------------------------------------------------------------|
+| `ReportId`           | int        | Igen     | -              | A jelentés egyedi azonosítója (automatikusan generált)                |
+| `ReporterId`         | string     | Igen     | -              | A jelentést beküldő felhasználó azonosítója                           |
+| `ReportedPersonId`   | string?    | Nem      | null           | A jelentett felhasználó azonosítója (ha felhasználó elleni jelentés)  |
+| `ReportTypeId`       | int        | Igen     | -              | A jelentés típusának azonosítója (pl. 1 = visszaélés, 2 = hibajelentés)|
+| `ReportMessage`      | string?    | Nem      | null           | A jelentés részletes leírása                                          |
+| `IsHandled`          | bool       | Nem      | false          | A jelentés kezelésének állapota                                        |
+| `CreatedAt`          | DateTime   | Nem      | DateTime.Now   | A jelentés létrehozásának időpontja                                    |

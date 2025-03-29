@@ -1,0 +1,25 @@
+# RequestViewModel Dokumentáció
+
+## **Áttekintés**
+A `RequestViewModel` osztály a kérelmek kezeléséért felelős ViewModel az MVVM (Model-View-ViewModel) architektúrában. Ez az osztály biztosítja a kapcsolatot a felhasználói felület és az API szolgáltatás között a kérelmek kezeléséhez.
+
+## **Főbb komponensek**
+
+### **1. Függőségek**
+- `ApiService`: Kezeli a backend API-val való kommunikációt
+- `ObservableCollection<RequestModel>`: Dinamikusan frissülő kéréslista
+- `INotifyPropertyChanged`: Értesíti a View-t a tulajdonságok változásáról
+
+### **2. Főbb tulajdonságok**
+| Név               | Típus                          | Leírás                                                                 |
+|-------------------|--------------------------------|-----------------------------------------------------------------------|
+| `Requests`        | `ObservableCollection<RequestModel>` | Függőben lévő kérelmek listája (automatikus UI frissítéssel)         |
+| `SelectedRequest` | `RequestModel`                 | A kiválasztott kérés (kétirányú kötéshez)                            |
+
+### **3. Parancsok**
+| Parancs                 | Metódus               | Leírás                                                                 |
+|-------------------------|-----------------------|-----------------------------------------------------------------------|
+| `LoadRequestsCommand`   | `LoadRequestsAsync()` | Betölti a függőben lévő kérelmeket                                  |
+| `AcceptRequestCommand`  | `AcceptRequestAsync()`| Elfogadja a kiválasztott kérelmet                                   |
+| `DenyRequestCommand`    | `DenyRequestAsync()`  | Elutasítja a kiválasztott kérelmet                                  |
+| `GoToUsersCommand`      | `GoToUsers()`         | Átirányít a felhasználókezelő felületre                             |

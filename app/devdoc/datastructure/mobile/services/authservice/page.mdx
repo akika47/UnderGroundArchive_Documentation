@@ -1,0 +1,46 @@
+# AuthService Dokumentáció
+
+## **Áttekintés**
+Az `AuthService` osztály a felhasználói hitelesítési állapot kezeléséért felelős a MAUI mobilalkalmazásban. Singleton mintát követve biztosítja a bejelentkezési állapot nyomon követését és a JWT token kezelését.
+
+## **Főbb komponensek**
+
+### **1. Singleton implementáció**
+```csharp
+private static AuthService _instance;
+public static AuthService Instance => _instance ??= new AuthService();
+```
+- **Singleton minta**: Az osztálynak csak egy példánya létezik az alkalmazás életciklusa során
+- **Elérés**: `AuthService.Instance` segítségével globálisan elérhető
+
+### **2. Hitelesítési állapot**
+```csharp
+public bool IsLoggedIn { get; private set; } = false;
+public event Action OnAuthStateChanged;
+```
+- **IsLoggedIn**: Jelzi, hogy a felhasználó be van-e jelentkezve
+- **OnAuthStateChanged**: Esemény, ami a bejelentkezési állapot változásakor aktiválódik
+
+### **3. Bejelentkezési metódus**
+```csharp
+public void Login(string token)
+{
+    IsLoggedIn = true;
+    SecureStorage.SetAsync("jwt_token", token);
+    OnAuthStateChanged?.Invoke();
+}
+```
+- **Token tárolás**: A kapott JWT token elmentése a SecureStorage-ba
+- **Állapot frissítés**: `IsLoggedIn` beállítása és esemény kiváltása
+
+### **4. Kijelentkezési metódus**
+```csharp
+public async Task Logout()
+{
+    IsLoggedIn = false;
+    await SecureStorage.SetAsync("jwt_token", "");
+    OnAuthStateChanged?.Invoke();
+}
+```
+- **Token törlése**: A SecureStorage-ból eltávolítja a tokent
+- **Aszinkron művelet**: Visszatérési érték `Task`, mivel a SecureStorage művelet aszinkron

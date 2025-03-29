@@ -6,5 +6,7 @@ export default {
     components: "Komponensek",
     frontendservices: "Frontend Szolgáltatások",
     backendservices: "Backend Szolgáltatások",
-    modelsdtos: "Modellek és DTO-k"
+    modelsdtos: "Modellek és DTO-k",
+    wpf: "WPF",
+    mobile: "Mobil"
   };

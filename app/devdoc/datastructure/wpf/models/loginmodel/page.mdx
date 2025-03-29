@@ -1,0 +1,13 @@
+# LoginModel Dokumentáció
+
+## **Áttekintés**
+A `LoginModel` osztály egy egyszerű adatmodell, amely a bejelentkezési folyamat során használt felhasználói hitelesítő adatokat reprezentálja. Ez az osztály a WPF alkalmazás és a szerver közötti kommunikációban játszik kulcsszerepet, amikor a felhasználó bejelentkezik a rendszerbe.
+
+---
+
+## **Tulajdonságok**
+
+| Tulajdonság | Típus   | Kötelező | Leírás                                                                                         |
+|-------------|---------|----------|------------------------------------------------------------------------------------------------|
+| `Login`     | string  | Igen     | A felhasználó által megadott bejelentkezési azonosító (email, felhasználónév vagy egyedi azonosító) |
+| `Password`  | string  | Igen     | A felhasználó jelszava (általában titkosítva vagy hash-elve kerül továbbításra)               |

@@ -1,0 +1,40 @@
+# HomeViewModel Dokumentáció
+
+## **Áttekintés**
+A `HomeViewModel` osztály a kezdőképernyő (Home) üzleti logikáját valósítja meg a .NET MAUI mobilalkalmazásban. Fő feladata a navigáció kezelése a könyvek listáját megjelenítő oldalra.
+
+## **Főbb komponensek**
+
+### **1. Navigációs parancs**
+```csharp
+public ICommand NavigateToBooksCommand { get; set; }
+```
+- **Típus**: `ICommand` - A MAUI parancskezelő interfésze
+- **Cél**: A könyvek listáját megjelenítő oldalra (`BooksView`) való navigáció kezelése
+
+### **2. Konstruktor**
+```csharp
+public HomeViewModel(ApiService apiService)
+{
+    NavigateToBooksCommand = new Command(async () =>
+    {
+        await Shell.Current.GoToAsync(nameof(BooksView));
+    });
+}
+```
+- **Dependency Injection**: Kap egy `ApiService` példányt (jelenleg nem használja)
+- **Parancs inicializálása**: Létrehozza a navigációs parancsot
+
+## **Technikai részletek**
+
+### **1. INotifyPropertyChanged implementáció**
+```csharp
+public event PropertyChangedEventHandler PropertyChanged;
+
+protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+{
+    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+}
+```
+- **Feladat**: Értesíti a nézetet a tulajdonságváltozásokról
+- **CallerMemberName**: Automatikusan feltölti a hívó tulajdonság nevét

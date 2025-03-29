@@ -1,0 +1,67 @@
+# ModeratorView XAML Dokumentáció
+
+## **Áttekintés**
+A `ModeratorView` a moderátori felületet valósítja meg WPF-ben, amely lehetővé teszi a jelentések kezelését. A nézet a korábban definiált ResourceDictionary stílusokat használja és a `ModeratorViewModel`-hez kötődik.
+
+## **Struktúra és Elrendezés**
+
+### **1. Ablaktulajdonságok**
+```xml
+<Window ...
+    Title="ModeratorView"
+    Height="450"
+    Width="800"
+    Style="{StaticResource BackgroundStyle}">
+```
+- **Méretek**: 800x450 pixel
+- **Stílus**: `BackgroundStyle` alkalmazása a konzisztens sötét témához
+
+### **2. Fő elrendezés**
+```xml
+<Grid>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>  <!-- Gombok sora -->
+        <RowDefinition Height="*"/>     <!-- Adattábla -->
+    </Grid.RowDefinitions>
+```
+
+### **3. Gombpanel (DockPanel)**
+```xml
+<DockPanel Grid.Row="0">
+    <!-- Gombok -->
+</DockPanel>
+```
+- **Gombok elhelyezése**: Horizontális elrendezés `DockPanel`-lel
+- **Gombok**:
+  - `Load Pending Reports`: Betölti a függőben lévő jelentéseket
+  - `Accept Reports`: Elfogadja a jelentést (törli a jelentett tartalmat)
+  - `Deny Reports`: Elutasítja a jelentést
+  - `Log Out`: Kijelentkezés (jobb oldalon)
+
+### **4. Adattábla (DataGrid)**
+```xml
+<DataGrid Grid.Row="1"
+          ItemsSource="{Binding Reports}"
+          SelectedItem="{Binding SelectedReport}"
+          Style="{StaticResource UserDataGridStyle}"
+          AutoGenerateColumns="True"/>
+```
+- **Adatkötés**:
+  - `Reports`: A megjelenítendő jelentések listája
+  - `SelectedReport`: A kiválasztott jelentés
+- **Stílus**: `UserDataGridStyle` alkalmazása
+- **Oszlopok**: Automatikus generálás (`AutoGenerateColumns="True"`)
+
+## **Parancskötések**
+| Gomb szövege                          | Parancs kötés                     | Leírás                                      |
+|---------------------------------------|-----------------------------------|--------------------------------------------|
+| "Load Pending Reports"                | `{Binding LoadReportsCommand}`    | Frissíti a jelentések listáját            |
+| "Accept Reports(Delete Reported Creation)" | `{Binding AcceptReportCommand}` | Elfogadja és kezeli a jelentést           |
+| "Deny Reports"                        | `{Binding DenyReportCommand}`     | Elutasítja a jelentést                   |
+| "Log Out"                             | `{Binding LogOutCommand}`         | Bezárja a moderátori felületet           |
+
+## **Stílusok és erőforrások**
+A nézet a következő előre definiált stílusokat használja:
+- `BackgroundStyle`: Ablak háttér
+- `ButtonStyle`: Gombok megjelenése
+- `UserDataGridStyle`: Adattábla stílusa

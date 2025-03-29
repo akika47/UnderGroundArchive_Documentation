@@ -1,0 +1,70 @@
+# BookDTO
+
+## **Áttekintés**
+Ez a fájl a MAUI mobilalkalmazás Data Transfer Object (DTO) osztályait tartalmazza, amelyek az API-val való kommunikációhoz szükséges adatstruktúrákat definiálják. Az osztályok a könyvekhez kapcsolódó adatokat és értékeléseket reprezentálják.
+
+## **DTO Osztályok**
+
+### **1. CommentDTO**
+```csharp
+public class CommentDTO
+{
+    public string CommentMessage { get; set; }
+}
+```
+- **Cél**: Könyvekre írt kommentek tárolására
+- **Tulajdonság**:
+  - `CommentMessage`: A komment szöveges tartalma (kötelező)
+
+### **2. ReaderRatingDTO**
+```csharp
+public class ReaderRatingDTO
+{
+    public int RatingValue { get; set; }
+}
+```
+- **Cél**: Olvasói értékelések tárolására
+- **Tulajdonság**:
+  - `RatingValue`: Az értékelés értéke (1-5 skála)
+
+### **3. CriticRatingDTO**
+```csharp
+public class CriticRatingDTO
+{
+    public int RatingValue { get; set; }
+}
+```
+- **Cél**: Kritikusok értékeléseinek tárolására
+- **Megjegyzés**: Struktúrája megegyezik az olvasói értékeléssel, de logikai szeparációt biztosít
+
+### **4. BookDTO**
+```csharp
+public class BookDTO
+{
+    public int Id { get; set; }
+    public string BookName { get; set; }
+    public int GenreId { get; set; }
+    public int CategoryId { get; set; }
+    public string BookDescription { get; set; }
+    public List<CommentDTO> Comments { get; set; }
+    public List<ReaderRatingDTO> ReaderRatings { get; set; }
+    public List<CriticRatingDTO> CriticRatings { get; set; }
+    public double AverageRating { get; set; }
+    public string AuthorId { get; set; }
+}
+```
+- **Cél**: Könyvek teljes adatstruktúrájának reprezentálására
+
+#### **Tulajdonságok**:
+| Tulajdonság          | Típus                     | Leírás                                                                 |
+|----------------------|---------------------------|-----------------------------------------------------------------------|
+| `Id`                | int                       | A könyv egyedi azonosítója                                           |
+| `BookName`          | string                    | A könyv címe                                                        |
+| `GenreId`          | int                       | A műfaj azonosítója                                                  |
+| `CategoryId`       | int                       | A kategória azonosítója                                              |
+| `BookDescription`  | string                    | A könyv leírása                                                      |
+| `Comments`         | `List<CommentDTO>`        | A könyvhöz tartozó kommentek listája                                 |
+| `ReaderRatings`    | `List<ReaderRatingDTO>`   | Olvasói értékelések listája                                          |
+| `CriticRatings`    | `List<CriticRatingDTO>`   | Kritikus értékelések listája                                         |
+| `AverageRating`    | double                    | Az átlagos értékelés (kiszámolt érték)                               |
+| `AuthorId`         | string                    | A szerző felhasználói azonosítója                                    |

@@ -1,0 +1,22 @@
+# ApiService Dokumentáció
+
+## **Áttekintés**
+Az `ApiService` osztály a WPF alkalmazás és a backend API közötti kommunikációt kezeli. Ez a szolgáltatás felelős a hitelesítésért, adatlekérésért és különböző adminisztratív műveletekért.
+
+## **Főbb funkciók**
+
+### **1. Hitelesítés és munkamenet kezelés**
+- `LoginAsync`: Bejelentkezési funkció JWT token visszaszerzésével
+- `SetToken`: Token beállítása a későbbi kérésekhez
+- `LogOut`: Kijelentkezés és token eltávolítása
+- `EnsureAuthenticated`: Privát segédmetódus hitelesítés ellenőrzésére
+
+### **2. Moderátori funkciók**
+- `GetPendingReportsAsync`: Függőben lévő jelentések lekérése
+- `GetPendingRequestsAsync`: Függőben lévő kérelmek lekérése
+
+### **3. Adminisztratív funkciók**
+- `GetUsersAsync`: Összes felhasználó listázása
+- `AcceptRequestAsync`/`DenyRequestAsync`: Kérelmek kezelése
+- `ChangeMuteStatusAsync`/`ChangeBanStatusAsync`: Felhasználói státusz módosítása
+- `UpdateUserRoleAsync`: Felhasználói jogosultságok frissítése
