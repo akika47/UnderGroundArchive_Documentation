@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 export default {
-    tools: "Eszközök 🛠️",
-    resources: "Források 🔥",
+    tools: "Eszközök",
+    resources: "Források",
     datastructure: "Adatszerkezet"
   };
   
