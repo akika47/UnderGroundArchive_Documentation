@@ -3,5 +3,6 @@ export default {
     installation: "Letöltési útmutató ",
     setup: "Telepítési útmutató",
     startup: "Indítási útmutató",
+    functionality: "Használati útmutató",
   };
   

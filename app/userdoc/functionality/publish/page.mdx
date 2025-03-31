@@ -1,0 +1,38 @@
+# Felhasználói Dokumentáció - Könyv Publikálása
+
+## Áttekintés
+Ez a dokumentáció bemutatja a könyv publikálási felület használatát és a hozzáférési jogosultságokat.
+
+## Funkcionalitás
+A könyv publikálási oldal lehetőséget biztosít arra, hogy a felhasználók új könyveket adjanak hozzá a rendszerhez. Az űrlapon megadható a könyv neve, műfaja, kategóriája és egy leírás.
+
+### Űrlap mezői
+- **Könyv neve:** A könyv címe.
+- **Műfaj:** Legördülő menü, amelyből a felhasználó kiválaszthatja a könyv műfaját.
+- **Kategória:** Legördülő menü, amelyből a felhasználó kiválaszthatja a könyv kategóriáját.
+- **Könyv leírás:** Szövegdoboz, ahol a könyv tartalmáról adható rövid összegzés.
+- **Könyv publikálása gomb:** Az űrlap elküldése után a rendszer elmenti a könyvet az adatbázisba.
+
+#### Könyv publikálási felület
+![Könyv publikálási oldal](/images/AccessApproved.png)
+
+## Hozzáférési Jogosultságok
+A könyv publikálási oldal **csak az "Author" szerepkörrel rendelkező felhasználók számára érhető el**. Ha egy felhasználó nem rendelkezik ezzel a jogosultsággal, akkor a második képen látható hibaüzenet jelenik meg:
+
+**"Nem rendelkezik megfelelő jogosultságokkal az oldal eléréséhez."**
+
+Ebben az esetben a felhasználónak rendszergazdához kell fordulnia a megfelelő jogosultság megszerzéséhez.
+
+#### Hozzáférési hibaüzenet
+![Könyv publikálási oldal](/images/AccessDenied.png)
+
+## Hibakezelés
+- **Nem megfelelő jogosultság:** Ha a felhasználó nem rendelkezik "Author" szerepkörrel, akkor az oldal nem jeleníti meg az űrlapot, helyette egy hibaüzenet látható.
+- **Hiányzó mezők:** Az űrlap csak akkor küldhető el, ha minden kötelező mező ki van töltve.
+- **Hálózati hiba:** Ha a szerver nem érhető el, a rendszer hibaüzenetet ad vissza, és az adatok nem kerülnek mentésre.
+
+## Összegzés
+- A könyv publikálási oldal célja új könyvek hozzáadása.
+- Csak "Author" szerepkörrel használható.
+- Jogosultság hiányában hibaüzenet jelenik meg.
+- Az űrlap kitöltése és elküldése után a könyv bekerül a rendszerbe.
