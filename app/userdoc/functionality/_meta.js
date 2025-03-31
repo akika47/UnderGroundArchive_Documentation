@@ -7,5 +7,6 @@ export default{
     profile: "Profil",
     settings: "Beállitások",
     requests: "Kérelmek",
-    testusers: "Teszt Felhasználók"
+    testusers: "Teszt Felhasználók",
+    pointsystem: "Pontrendszer",
 };
