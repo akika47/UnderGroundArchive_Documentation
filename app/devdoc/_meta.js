@@ -2,6 +2,7 @@
 export default {
     tools: "Eszközök",
     resources: "Források",
-    datastructure: "Adatszerkezet"
+    datastructure: "Adatszerkezet",
+    testdoc: "Teszt Dokumentáció"
   };
   
